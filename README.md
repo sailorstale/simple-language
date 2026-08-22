@@ -1,8 +1,12 @@
 # Simple Language
 
-Набор правил ясного письма для Claude Code и агентов на его основе. Внутри два скила — для русского и для английского текста — и два хука, которые в каждый ход напоминают модели держаться простого языка. Скопировал файлы к себе, и Claude начинает писать понятнее: короткими предложениями, простыми словами, с щедрым форматированием.
+Claude по умолчанию пишет сложным языком: плотно, с терминами и длинными предложениями. Этот набор правил учит его писать понятно — доступным языком на любую сложную тему, — а щедрое форматирование делает текст удобным для чтения. Скопируй файлы к себе, и Claude начнёт писать так, что понятно с первого раза.
 
-A toolkit of plain-writing rules for Claude Code. It ships two skills — one for Russian, one for English — and two hooks that remind the model to keep the language simple on every turn. Copy the files into your Claude config and Claude writes more clearly: short sentences, everyday words, generous structure.
+Внутри два скила (для русского и для английского текста) и два хука, которые в каждый ход напоминают модели держаться простого языка.
+
+By default, Claude writes in complex language: dense, jargon-heavy, and long. This toolkit teaches it to write plainly — accessible language on any topic, however complex — and generous formatting makes the result easy to read. Copy the files into your Claude config, and Claude writes so you understand it on the first read.
+
+Inside are two skills (Russian and English) and two hooks that remind the model to keep the language simple on every turn.
 
 ## Что внутри
 

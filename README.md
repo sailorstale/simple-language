@@ -53,4 +53,4 @@ cp hooks/write-simply-en.sh ~/.claude/hooks/ && chmod +x ~/.claude/hooks/write-s
 
 ## Лицензия
 
-Пользуйся свободно, меняй под себя, делись дальше.
+MIT — пользуйся свободно, меняй под себя, делись дальше. Полный текст в файле [LICENSE](LICENSE).

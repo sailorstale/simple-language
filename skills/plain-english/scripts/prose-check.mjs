@@ -160,8 +160,13 @@ function checkHype(file, { n, text }) {
 // ── Run ──────────────────────────────────────────────────────────────────────
 
 const files = targets()
+let missing = 0
 for (const file of files) {
-  if (!existsSync(join(ROOT, file))) { console.log(`file not found: ${file}`); continue }
+  if (!existsSync(join(ROOT, file))) {
+    console.error(`file not found: ${file}`)
+    missing++
+    continue
+  }
   for (const line of readLines(file)) {
     checkFormal(file, line)
     checkHidden(file, line)
@@ -191,8 +196,15 @@ for (const f of findings) {
   byFile.get(f.file).push(f)
 }
 
+const checked = files.length - missing
+
+if (missing) {
+  console.error(`\nMissing files: ${missing}. The check is INCOMPLETE — do not treat it as passed.`)
+}
+
 if (!findings.length) {
-  console.log(`Checked ${files.length} file(s). No findings.`)
+  if (missing) process.exit(2)
+  console.log(`Checked ${checked} file(s). No findings.`)
   process.exit(0)
 }
 
@@ -216,7 +228,7 @@ for (const [file, list] of [...byFile.entries()].sort((a, b) => b[1].length - a[
 const counts = new Map()
 for (const f of findings) counts.set(f.rule, (counts.get(f.rule) || 0) + 1)
 console.log('\n' + '─'.repeat(60))
-console.log(`Checked ${files.length} file(s). ${findings.length} finding(s).`)
+console.log(`Checked ${checked} file(s). ${findings.length} finding(s).`)
 for (const [rule, n] of [...counts.entries()].sort((a, b) => b[1] - a[1])) {
   console.log(`  ${String(n).padStart(4)}  ${NAMES[rule] || rule}`)
 }

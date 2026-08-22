@@ -195,8 +195,13 @@ function checkList(file, { n, text, raw }) {
 // ── Прогон ──────────────────────────────────────────────────────────────────
 
 const files = targets()
+let missing = 0
 for (const file of files) {
-  if (!existsSync(join(ROOT, file))) { console.log(`не нашёл файл: ${file}`); continue }
+  if (!existsSync(join(ROOT, file))) {
+    console.error(`не нашёл файл: ${file}`)
+    missing++
+    continue
+  }
   for (const line of readLines(file)) {
     checkWords(file, line)
     checkLinks(file, line)
@@ -228,8 +233,16 @@ for (const f of findings) {
   byFile.get(f.file).push(f)
 }
 
+const checked = files.length - missing
+
+if (missing) {
+  console.error(`
+Не найдено файлов: ${missing}. Проверка НЕ полная — считать её пройденной нельзя.`)
+}
+
 if (!findings.length) {
-  console.log(`Проверено файлов: ${files.length}. Нарушений не нашёл.`)
+  if (missing) process.exit(2)
+  console.log(`Проверено файлов: ${checked}. Нарушений не нашёл.`)
   process.exit(0)
 }
 
@@ -253,10 +266,11 @@ for (const [file, list] of [...byFile.entries()].sort((a, b) => b[1].length - a[
 const counts = new Map()
 for (const f of findings) counts.set(f.rule, (counts.get(f.rule) || 0) + 1)
 console.log('\n' + '─'.repeat(60))
-console.log(`Проверено файлов: ${files.length}. Всего находок: ${findings.length}.`)
+console.log(`Проверено файлов: ${checked}. Всего находок: ${findings.length}.`)
 for (const [rule, n] of [...counts.entries()].sort((a, b) => b[1] - a[1])) {
   console.log(`  ${String(n).padStart(4)}  ${NAMES[rule] || rule}`)
 }
 console.log('\nПроверка ничего не чинит и не всегда права. Решает человек.')
 
+if (missing) process.exit(2)
 if (STRICT && findings.some((f) => f.strict)) process.exit(1)

@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/write-simply-reminder.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

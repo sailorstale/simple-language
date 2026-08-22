@@ -2,21 +2,13 @@
 
 Правила ясного письма для Claude Code — русский и английский. / Plain-writing rules for Claude Code — Russian and English.
 
-## Боль
+**Боль.** Claude по умолчанию пишет сложным языком: плотно, с терминами и длинными предложениями.
 
-Claude по умолчанию пишет сложным языком: плотно, с терминами и длинными предложениями.
+**Решение.** Этот набор правил учит Claude писать понятно — доступным языком на любую сложную тему, — а щедрое форматирование делает текст удобным для чтения. Русский свод сделан по мотивам инфостиля Максима Ильяхова ([Главред](https://glvrd.ru), книга «Пиши, сокращай»), а форматирование опирается на руководства [Microsoft](https://learn.microsoft.com/en-us/style-guide/welcome/), [Google](https://developers.google.com/style) и [Nielsen Norman Group](https://www.nngroup.com/articles/how-users-read-on-the-web/).
 
-## Решение
+**Pain.** By default, Claude writes in complex language: dense, jargon-heavy, and long-winded.
 
-Этот набор правил учит Claude писать понятно — доступным языком на любую сложную тему, — а щедрое форматирование делает текст удобным для чтения. Русский свод сделан по мотивам инфостиля Максима Ильяхова ([Главред](https://glvrd.ru), книга «Пиши, сокращай»), а форматирование опирается на руководства [Microsoft](https://learn.microsoft.com/en-us/style-guide/welcome/), [Google](https://developers.google.com/style) и [Nielsen Norman Group](https://www.nngroup.com/articles/how-users-read-on-the-web/).
-
-## Pain
-
-By default, Claude writes in complex language: dense, jargon-heavy, and long-winded.
-
-## Solution
-
-This toolkit teaches Claude to write plainly — accessible language on any topic, however complex — and generous formatting makes the result easy to read. The English rules follow the [US federal plain-language guidelines](https://www.plainlanguage.gov/guidelines/) and the [GOV.UK style guide](https://www.gov.uk/guidance/style-guide), and the formatting draws on the [Microsoft](https://learn.microsoft.com/en-us/style-guide/welcome/), [Google](https://developers.google.com/style), and [Nielsen Norman Group](https://www.nngroup.com/articles/how-users-read-on-the-web/) style guides.
+**Solution.** This toolkit teaches Claude to write plainly — accessible language on any topic, however complex — and generous formatting makes the result easy to read. The English rules follow the [US federal plain-language guidelines](https://www.plainlanguage.gov/guidelines/) and the [GOV.UK style guide](https://www.gov.uk/guidance/style-guide), and the formatting draws on the [Microsoft](https://learn.microsoft.com/en-us/style-guide/welcome/), [Google](https://developers.google.com/style), and [Nielsen Norman Group](https://www.nngroup.com/articles/how-users-read-on-the-web/) style guides.
 
 ## Что внутри
 

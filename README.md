@@ -1,17 +1,27 @@
-# Simple Language
+# Simple Language (EN/RU)
 
-Claude по умолчанию пишет сложным языком: плотно, с терминами и длинными предложениями. Этот набор правил учит его писать понятно — доступным языком на любую сложную тему, — а щедрое форматирование делает текст удобным для чтения. Скопируй файлы к себе, и Claude начнёт писать так, что понятно с первого раза.
+Правила ясного письма для Claude Code — русский и английский. / Plain-writing rules for Claude Code — Russian and English.
 
-Внутри два скила (для русского и для английского текста) и два хука, которые в каждый ход напоминают модели держаться простого языка.
+## Боль
 
-By default, Claude writes in complex language: dense, jargon-heavy, and long. This toolkit teaches it to write plainly — accessible language on any topic, however complex — and generous formatting makes the result easy to read. Copy the files into your Claude config, and Claude writes so you understand it on the first read.
+Claude по умолчанию пишет сложным языком: плотно, с терминами и длинными предложениями.
 
-Inside are two skills (Russian and English) and two hooks that remind the model to keep the language simple on every turn.
+## Решение
+
+Этот набор правил учит Claude писать понятно — доступным языком на любую сложную тему, — а щедрое форматирование делает текст удобным для чтения. Русский свод сделан по мотивам инфостиля Максима Ильяхова ([Главред](https://glvrd.ru), книга «Пиши, сокращай»), а форматирование опирается на руководства [Microsoft](https://learn.microsoft.com/en-us/style-guide/welcome/), [Google](https://developers.google.com/style) и [Nielsen Norman Group](https://www.nngroup.com/articles/how-users-read-on-the-web/).
+
+## Pain
+
+By default, Claude writes in complex language: dense, jargon-heavy, and long-winded.
+
+## Solution
+
+This toolkit teaches Claude to write plainly — accessible language on any topic, however complex — and generous formatting makes the result easy to read. The English rules follow the [US federal plain-language guidelines](https://www.plainlanguage.gov/guidelines/) and the [GOV.UK style guide](https://www.gov.uk/guidance/style-guide), and the formatting draws on the [Microsoft](https://learn.microsoft.com/en-us/style-guide/welcome/), [Google](https://developers.google.com/style), and [Nielsen Norman Group](https://www.nngroup.com/articles/how-users-read-on-the-web/) style guides.
 
 ## Что внутри
 
 - **`skills/pishi-prosto`** — правила ясного русского письма. Есть машинная проверка (`scripts/prose-check.mjs`), которая ловит образы, длинные предложения, обрубки без глагола и пустой текст ссылки.
-- **`skills/plain-english`** — правила ясного английского письма, заземлённые на plainlanguage.gov и GOV.UK.
+- **`skills/plain-english`** — правила ясного английского письма.
 - **`hooks/write-simply-reminder.sh`** — напоминание правил в каждый ход для **русского** текста.
 - **`hooks/write-simply-en.sh`** — то же для **английского** текста. Ставь только один хук, под свой язык: если включить оба, они будут слать напоминание каждый ход вдвоём.
 
@@ -66,26 +76,6 @@ cp hooks/write-simply-en.sh ~/.claude/hooks/ && chmod +x ~/.claude/hooks/write-s
 - **Хук** — это короткая выжимка, которая звучит в каждый ход. Она держит правила перед глазами модели в обычном разговоре, где полный свод не открывается.
 
 Скилы годятся для любого агента на Claude Code. Хук — это возможность именно Claude Code (событие `UserPromptSubmit`), поэтому в другой среде он может не сработать.
-
-## Источники и стандарты
-
-Правила собраны из общепризнанных руководств по письму и вёрстке. За каждым приёмом стоит конкретный источник: стандарты Microsoft и Google, рекомендации государственных служб и исследования о том, как люди читают с экрана. Это проверенные практики, которые годами применяют крупные технологические компании и целые государства.
-
-**Форматирование** (в обоих скилах) опирается на четыре источника:
-
-- [Microsoft Writing Style Guide](https://learn.microsoft.com/en-us/style-guide/welcome/) — списки, заголовки, таблицы, ссылки, выделение текста, alt-текст.
-- [Google developer documentation style guide](https://developers.google.com/style) — то же плюс типы заметок и перекрёстные ссылки.
-- [Nielsen Norman Group](https://www.nngroup.com/articles/how-users-read-on-the-web/) — исследования о том, как люди читают с экрана: сканирование, F-паттерн, инвертированная пирамида.
-- [W3C Web Accessibility Initiative](https://www.w3.org/WAI/) — доступность: структура заголовков и alt-текст.
-
-**Простой язык** в английском скиле опирается на канон plain English:
-
-- [US federal plain-language guidelines](https://www.plainlanguage.gov/guidelines/) — активный залог, короткие предложения, простые слова.
-- [GOV.UK content style guide](https://www.gov.uk/guidance/style-guide) — те же правила плюс конкретные замены слов и числовые ориентиры, например проверять предложения длиннее 25 слов.
-
-Русский скил сделан по мотивам инфостиля Максима Ильяхова — книги «Пиши, сокращай» и сервиса [Главред](https://glvrd.ru). Одно отличие мы держим сознательно: Ильяхов учит сокращать, а наш свод просит разворачивать мысль полными предложениями. Понятность даёт форматирование, урезание тексту скорее мешает.
-
-> English readers: the same sources — Microsoft, Google, Nielsen Norman Group, and the W3C WAI for formatting; plainlanguage.gov and the GOV.UK style guide for plain English.
 
 ## Лицензия
 

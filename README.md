@@ -25,7 +25,7 @@ Inside are two skills (Russian and English) and two hooks that remind the model 
 git clone https://github.com/sailorstale/simple-language.git
 ```
 
-Если предпочитаешь без Claude, ниже два способа сделать это руками.
+Дальше — только на случай, если ставишь без Claude или хочешь понять, что именно происходит. Обычному пользователю эти настройки трогать не нужно, Claude делает их за него.
 
 ### Установщик
 
@@ -83,7 +83,7 @@ cp hooks/write-simply-en.sh ~/.claude/hooks/ && chmod +x ~/.claude/hooks/write-s
 - [US federal plain-language guidelines](https://www.plainlanguage.gov/guidelines/) — активный залог, короткие предложения, простые слова.
 - [GOV.UK content style guide](https://www.gov.uk/guidance/style-guide) — те же правила плюс конкретные замены слов и числовые ориентиры, например проверять предложения длиннее 25 слов.
 
-Русский скил — собственный синтез в том же духе простого языка, с теми же правилами форматирования.
+Русский скил сделан по мотивам инфостиля Максима Ильяхова — книги «Пиши, сокращай» и сервиса [Главред](https://glvrd.ru). Одно отличие мы держим сознательно: Ильяхов учит сокращать, а наш свод просит разворачивать мысль полными предложениями. Понятность даёт форматирование, урезание тексту скорее мешает.
 
 > English readers: the same sources — Microsoft, Google, Nielsen Norman Group, and the W3C WAI for formatting; plainlanguage.gov and the GOV.UK style guide for plain English.
 

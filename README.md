@@ -67,6 +67,26 @@ cp hooks/write-simply-en.sh ~/.claude/hooks/ && chmod +x ~/.claude/hooks/write-s
 
 Скилы годятся для любого агента на Claude Code. Хук — это возможность именно Claude Code (событие `UserPromptSubmit`), поэтому в другой среде он может не сработать.
 
+## Источники и стандарты
+
+Правила собраны из общепризнанных руководств по письму и вёрстке. За каждым приёмом стоит конкретный источник: стандарты Microsoft и Google, рекомендации государственных служб и исследования о том, как люди читают с экрана. Это проверенные практики, которые годами применяют крупные технологические компании и целые государства.
+
+**Форматирование** (в обоих скилах) опирается на четыре источника:
+
+- [Microsoft Writing Style Guide](https://learn.microsoft.com/en-us/style-guide/welcome/) — списки, заголовки, таблицы, ссылки, выделение текста, alt-текст.
+- [Google developer documentation style guide](https://developers.google.com/style) — то же плюс типы заметок и перекрёстные ссылки.
+- [Nielsen Norman Group](https://www.nngroup.com/articles/how-users-read-on-the-web/) — исследования о том, как люди читают с экрана: сканирование, F-паттерн, инвертированная пирамида.
+- [W3C Web Accessibility Initiative](https://www.w3.org/WAI/) — доступность: структура заголовков и alt-текст.
+
+**Простой язык** в английском скиле опирается на канон plain English:
+
+- [US federal plain-language guidelines](https://www.plainlanguage.gov/guidelines/) — активный залог, короткие предложения, простые слова.
+- [GOV.UK content style guide](https://www.gov.uk/guidance/style-guide) — те же правила плюс конкретные замены слов и числовые ориентиры, например проверять предложения длиннее 25 слов.
+
+Русский скил — собственный синтез в том же духе простого языка, с теми же правилами форматирования.
+
+> English readers: the same sources — Microsoft, Google, Nielsen Norman Group, and the W3C WAI for formatting; plainlanguage.gov and the GOV.UK style guide for plain English.
+
 ## Лицензия
 
 MIT — пользуйся свободно, меняй под себя, делись дальше. Полный текст в файле [LICENSE](LICENSE).

@@ -12,7 +12,9 @@
     "\"empty-openers\" — openers that take the first slot instead of the action.",
     "\"paragraph-openers\" — words a paragraph does not start with.",
     "\"hidden-negatives\" — words carrying a hidden \"not\", used to count double negatives.",
-    "\"chatty\" — internet shorthand and false togetherness."
+    "\"chatty\" — internet shorthand and false togetherness.",
+    "\"idioms\" — sayings a reader outside your country or in translation will lose (advisory).",
+    "\"let's\" is handled in prose, not here: it is fine in a statement and wrong in an instruction."
   ],
   "formal": {
     "utilise": "use",
@@ -155,11 +157,26 @@
     "without"
   ],
   "chatty": [
-    "let's",
-    "lets ",
     "tl;dr",
     "ymmv",
     "imho",
     "afaik"
+  ],
+  "idioms": [
+    "ballpark",
+    "home run",
+    "touch base",
+    "move the needle",
+    "low-hanging fruit",
+    "back to square one",
+    "the whole nine yards",
+    "a level playing field",
+    "out of the box",
+    "hit the ground running",
+    "boil the ocean",
+    "silver bullet",
+    "elephant in the room",
+    "piece of cake",
+    "under the hood"
   ]
 }

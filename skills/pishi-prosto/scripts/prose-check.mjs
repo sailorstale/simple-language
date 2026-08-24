@@ -201,6 +201,14 @@ function checkEasy(file, { n, text }) {
   }
 }
 
+// Ильяхов: оценочное прилагательное нечем проверить, читатель его пропускает.
+function checkAds(file, { n, text }) {
+  if (!SHOW_ALL) return
+  for (const w of rules['реклама'] || []) {
+    if (wordRe(w).test(text)) add(file, n, 'реклама', false, text, `«${w}» — оценка без факта, поставь число, действие или сравнение`)
+  }
+}
+
 // Microsoft bias-free, Google inclusive: задевающие и неточные термины.
 function checkLoaded(file, { n, text }) {
   for (const [w, replace] of Object.entries(rules['нагруженные'] || {})) {
@@ -333,6 +341,7 @@ for (const file of files) {
     checkList(file, line)
     checkEasy(file, line)
     checkLoaded(file, line)
+    checkAds(file, line)
     checkLatin(file, line)
     checkSlash(file, line)
     checkDate(file, line)
@@ -373,6 +382,7 @@ const NAMES = {
   'длинное-число': 'Длинное число не разбито на группы',
   'отрицание': 'Двойное отрицание (проверь глазами)',
   'один-пункт': 'Нумерованный список из одного пункта',
+  'реклама': 'Оценка без факта (проверь глазами)',
 }
 
 const byFile = new Map()

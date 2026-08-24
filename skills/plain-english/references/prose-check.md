@@ -45,6 +45,7 @@ Strict findings point at something the rules name outright. Advisory findings ar
 | A range written with a hyphen | strict |
 | A numbered list holding a single item | strict |
 | A double negative in one sentence | advisory, needs `--all` |
+| An idiom or cultural reference | advisory, needs `--all` |
 
 The script ignores what the rules do not govern: front matter, fenced code blocks, inline code, link targets, and any line holding 🚫, ✅, or ❌, because those lines are deliberate examples of poor writing.
 
@@ -54,4 +55,4 @@ The check fixes nothing. It shows the spot and says what is wrong, and you decid
 
 ## Extending the word lists
 
-The words live beside the script in `prose-rules.json`, under these keys: `formal`, `hidden-verbs`, `empty-links`, `hype`, `easy`, `loaded`, `latin`, `empty-openers`, `paragraph-openers`, `hidden-negatives`, and `chatty`. Edit them by hand. Spot a formal word the check missed, add a line with its plain replacement, and the check gets better for every document after it.
+The words live beside the script in `prose-rules.json`, under these keys: `formal`, `hidden-verbs`, `empty-links`, `hype`, `easy`, `loaded`, `latin`, `empty-openers`, `paragraph-openers`, `hidden-negatives`, `chatty`, and `idioms`. Edit them by hand. Spot a formal word the check missed, add a line with its plain replacement, and the check gets better for every document after it.

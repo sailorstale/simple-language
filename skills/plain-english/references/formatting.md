@@ -30,6 +30,22 @@ If an item has details of its own, move them into **nested sub-items** with thei
 
 There is a subtlety about blank lines inside lists. Always leave a blank line before a list so it separates from the text above it. Put a blank line between items only when the items themselves run a paragraph long; short one-line items stay tight, without blank lines, because they already read well. Decide the spacing for the whole list at once, not item by item — mixed spacing inside one list reads as a mess.
 
+### Steps in a procedure
+
+A reader works a procedure with their hands while their eyes run down the lines. A step therefore follows its own shape.
+
+- **Open each step with an imperative verb**, which the reader scanning for the thing to press finds at once.
+- **Name the place before the action:** "In profile settings, select Save", because a place at the end registers too late.
+- **Keep one action per step.**
+- **Say what changed on screen**, so the reader knows whether to wait: "Select Run, and the results appear after a few seconds".
+- **Put a single step in a bullet**, because numbering exists to carry a sequence.
+
+Sources: [Google, procedures](https://developers.google.com/style/procedures) and [Microsoft, step-by-step instructions](https://learn.microsoft.com/en-us/style-guide/procedures-instructions/writing-step-by-step-instructions).
+
+### A lead-in says what the list means
+
+The line before a list does more than announce that a list follows. It tells the reader what the set adds up to. "Three rules cover almost every table mistake" works, while "Here is a list of rules" does not.
+
 ### Items built to one pattern
 
 Express all items with the same parts of speech in the same order. The test is simple: the lead-in phrase plus any single item should read as a normal sentence.
@@ -103,6 +119,10 @@ Two headings in a row with no text between them is a mistake (Google, Microsoft)
 
 A short label is a bold run-in, not a heading of its own. Keep a one- or two-line note like "See also" as a bold lead-in to a paragraph (Microsoft calls this a run-in heading). Start a real `####` heading only when two or more distinct subtopics, or a sizeable block of text, sit under it. One level of headings is usually enough for a page or two (Microsoft), so do not split every small note into its own heading.
 
+### A heading and the line beneath it
+
+A subheading has to read on its own, apart from the document title and the parent section. The first sentence under it picks up the topic the heading promised and does not wander off. A short description of the document is not repeated as the opening paragraph.
+
 ## The job of each device
 
 Choose a device by how the content is built, not by habit.
@@ -133,6 +153,21 @@ Keep punctuation outside the link, and do not set the link itself in bold or ita
 
 > 🚫 **Poor:** "The full write-up is [here](address)."
 > ✅ **Better:** "The full write-up is in the [decision log](address)."
+
+### Cross-references and bracketed asides
+
+Three rules govern how a text sends the reader elsewhere.
+
+- **Place a link where the text needs it**, and cite a source at the point where you give its facts, rather than gathering links under a "Further reading" heading.
+- **Keep cross-references rare**, about one per section and at the end of a passage, and repeat a short passage instead of pointing at it.
+- **Lift a long bracketed aside into its own sentence**, keeping brackets for a short gloss, a source, a unit, or a file format.
+
+### Ranges, and error and success messages
+
+- **Write a range with a word:** `10am to 11am`, `500 to 900`. A hyphen reads as a minus sign, and a screen reader skips it; keep hyphens for tables.
+- **An error message never blames the person.** Say what happened, what follows, and what they can do right now.
+- **Name the cause when you know it** and offer the fix; when you do not, say so plainly and give a fallback route.
+- **Replace "Operation completed successfully"** with the useful fact: "Sent 1,200 to Vodafone".
 
 ## Tables
 

@@ -28,7 +28,7 @@ The first sentence is the answer. Say what happened, what matters, or what the r
 
 ### 2. One idea per sentence, and keep sentences short
 
-Give each sentence one main idea. If a sentence has three commas and two "which" clauses, split it into shorter ones. GOV.UK sets a practical gauge: check any sentence longer than 25 words and split it if you can. Keep paragraphs short too — GOV.UK caps a paragraph at five sentences, and a paragraph of three to seven lines reads well.
+Give each sentence one main idea and aim for about 15 to 20 words. If a sentence has three commas and two "which" clauses, split it into shorter ones. GOV.UK sets a practical gauge: check any sentence longer than 25 words and split it if you can. Keep paragraphs short too — GOV.UK caps a paragraph at five sentences, and a paragraph of three to seven lines reads well.
 
 Short does not mean clipped. Write full sentences with a subject and a verb; do not compress ideas into headline fragments. The point is one idea per sentence, not fewer words at any cost.
 
@@ -66,6 +66,10 @@ Address the reader as "you" where you can (GOV.UK). When you need the third pers
 > 🚫 **Poor:** "Applicants who would like to proceed would need to submit the form."
 > ✅ **Better:** "To proceed, you submit the form."
 
+**Contract the positive, spell out the negative.** Write `it's` and `you're` in ordinary statements. Write `cannot` and `do not` in full: a skimming reader misses the `n't` and takes the opposite instruction.
+
+**Match the word to the force behind it.** `Must` marks an obligation in law or contract, and `must not` marks a prohibition. `Need to` marks a requirement of your process, `can` marks the reader's choice, `should` marks a recommendation. Vague wording such as `it is advised` leaves the reader guessing.
+
 ### 6. Explain jargon, and spell out an abbreviation once
 
 When you need a specialist term, explain it the first time you use it. Spell out an abbreviation in full on first use, then use the short form for the rest of the page (GOV.UK). Do not assume the reader knows who "we" is — give the full name first.
@@ -74,6 +78,10 @@ When you need a specialist term, explain it the first time you use it. Spell out
 
 Explaining a term does not mean removing every specialist word. Keep a real term when it is worth knowing and define it once; drop a term only when a plain word carries the same meaning.
 
+**Skip the expansion for an abbreviation everyone knows.** Writing "United Kingdom (UK)" gives the reader nothing. Expand the rest on first use, keep about three of them per document, and write the others out in words.
+
+**Call one thing by one name from start to finish.** A synonym chosen for variety makes the reader wonder whether you mean the same thing. The reverse holds too: one word must not name two different things.
+
 ### 7. Keep the tone neutral and factual
 
 State facts plainly rather than colouring them. Subjective adjectives make text sound like spin and add no checkable information (GOV.UK), so cut "brilliant", "seamless", and "world-class". You do not need "please" or "please note" in instructions. Long runs of capital letters are hard to read and come across as shouting, so leave them out.
@@ -81,12 +89,20 @@ State facts plainly rather than colouring them. Subjective adjectives make text 
 > 🚫 **Poor:** "Our brilliant new service makes everything wonderfully simple."
 > ✅ **Better:** "This service lets you renew online in about five minutes."
 
+**Leave out idioms, sayings, and cultural references.** A sentence built on a sports metaphor loses the reader outside your country. Pick example names from more than one part of the world.
+
+**Put the person before the trait.** Write "a reader who cannot see" rather than "the blind". Leave a condition out altogether when it has no bearing on the task.
+
 ### 8. Give numbers meaning
 
 Do not drop a bare number; say what it means for the reader. A number tied to a consequence lands; a number on its own does not. Group long strings of digits — a phone number or a card number — the way people expect to read them (NNG).
 
 > 🚫 **Poor:** "The change affects 4,200 records."
 > ✅ **Better:** "The change affects 4,200 records — about one in every five in the database."
+
+**Spell out zero to nine, use digits from 10 up.** Versions, step numbers, prices, sizes, and technical values always take digits. Never open a sentence with a digit; rearrange the sentence instead.
+
+**Hand the number over ready to use.** Round to the precision the reader needs here, so "half a billion" beats "561.56 million". Where a formula or a condition appears, put the values in yourself and show the result.
 
 ### 9. Format generously, on purpose
 

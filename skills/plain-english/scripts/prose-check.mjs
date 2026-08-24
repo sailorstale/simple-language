@@ -126,7 +126,8 @@ function checkLinkText(file, { n, raw }) {
 function checkLong(file, { n, text, raw }) {
   const t = raw.trim()
   if (t.startsWith('|') || t.startsWith('#')) return
-  for (const s of text.split(/(?<=[.!?])\s+(?=[A-Z"'(])/)) {
+  // Обратная кавычка и жирный текст тоже начинают предложение: "…contract. `Need to` marks…"
+  for (const s of text.split(/(?<=[.!?])\s+(?=[A-Z"'(`*])/)) {
     const words = s.trim().split(/\s+/).filter(Boolean)
     if (words.length > 25)
       add(file, n, 'long', true, s, `${words.length} words in one sentence — split it (GOV.UK: check anything over 25)`)
@@ -189,6 +190,14 @@ function checkChatty(file, { n, text, raw }) {
   }
   if (/!(\s|$)/.test(text) && !/^\s*[-*]?\s*!\[/.test(text))
     add(file, n, 'chatty', true, text, 'an exclamation mark adds pressure, not a fact')
+}
+
+// GOV.UK, Microsoft global communications: an idiom is lost on a reader in translation.
+function checkIdioms(file, { n, text }) {
+  if (!SHOW_ALL) return
+  for (const w of rules['idioms'] || []) {
+    if (text.toLowerCase().includes(w)) add(file, n, 'idiom', false, text, `"${w}" is an idiom — say the thing plainly`)
+  }
 }
 
 // Federal PL Guidelines: a slash pushes the choice of meaning onto the reader.
@@ -315,6 +324,7 @@ for (const file of files) {
     checkLoaded(file, line)
     checkLatin(file, line)
     checkChatty(file, line)
+    checkIdioms(file, line)
     checkSlash(file, line)
     checkDate(file, line)
     checkEmptyOpener(file, line)
@@ -355,6 +365,7 @@ const NAMES = {
   range: 'Range written with a hyphen',
   negatives: 'Double negative (advisory)',
   'one-step': 'Numbered list with a single item',
+  idiom: 'Idiom or cultural reference (advisory)',
 }
 
 const byFile = new Map()

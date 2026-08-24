@@ -1,8 +1,8 @@
 # Simple Language
 
-Правила ясного письма для Claude Code. Есть русский набор и английский.
+**Скил для русского** | [English skill](README.en.md)
 
-[Read this in English](README.en.md)
+Правила ясного письма для Claude Code. Есть русский набор и английский.
 
 ## Боль
 

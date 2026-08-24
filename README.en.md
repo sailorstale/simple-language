@@ -1,8 +1,8 @@
 # Simple Language
 
-Plain-writing rules for Claude Code. There is an English set and a Russian one.
+[Скил для русского](README.md) | **English skill**
 
-[Читать по-русски](README.md)
+Plain-writing rules for Claude Code. There is an English set and a Russian one.
 
 ## The pain
 

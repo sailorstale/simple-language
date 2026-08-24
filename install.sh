@@ -92,5 +92,29 @@ PY
 fi
 
 echo
+if command -v node >/dev/null 2>&1; then
+  echo "Node.js на месте ($(node --version)) — проверка текста будет работать."
+  echo "Node.js found ($(node --version)) — the text check will work."
+else
+  echo "Node.js не найден. Скил и хук работают без него, а проверка текста — нет."
+  echo "Поставить можно тремя способами, любой подойдёт:"
+  echo "  1. Сказать Claude: «поставь мне Node.js» — он сделает сам."
+  echo "  2. Скачать установщик с https://nodejs.org и нажать кнопку LTS."
+  echo "  3. Если на Mac стоит Homebrew: brew install node"
+  echo
+  echo "Node.js not found. The skill and the hook work without it; the text check does not."
+  echo "Three ways to get it, any will do:"
+  echo "  1. Ask Claude: \"install Node.js for me\" — it will do it."
+  echo "  2. Download the installer from https://nodejs.org and press the LTS button."
+  echo "  3. On a Mac with Homebrew: brew install node"
+fi
+
+echo
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "python3 не найден. Хук будет слать полный свод каждый ход, без экономии."
+  echo "python3 not found. The hook will send the full rulebook every turn, with no saving."
+  echo
+fi
+
 echo "Готово. Перезапусти сессию Claude, чтобы он подхватил изменения."
 echo "Done. Restart your Claude session so it picks up the changes."

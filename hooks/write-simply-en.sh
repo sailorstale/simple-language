@@ -1,21 +1,22 @@
 #!/bin/bash
-# Reminder of the plain-English rules for English prose.
+# Reminder of the plain-English rules, trimmed for chat.
 # Вставляется в контекст модели через UserPromptSubmit → additionalContext.
 #
 # Устройство. Хук платится за КАЖДОЕ сообщение, и копии остаются в истории, поэтому
-# полный свод уходит редко, а между ним идёт короткое напоминание на четверть длины.
-# Служебные сообщения («да», «/команда», путь к файлу) не получают ничего.
+# он несёт только то, что проседает в разговоре. Тонкости оформления документа сюда
+# не входят: они живут в скиле и подгружаются под большой текст. Полный свод уходит
+# редко, между ним идёт короткое напоминание, а служебные сообщения не получают ничего.
 #
 # Настройки через переменные окружения:
 #   SIMPLE_LANGUAGE_FULL_EVERY=10  — каждое N-е сообщение получает полный свод (по умолчанию 10)
-#   SIMPLE_LANGUAGE_MODE=full      — всегда полный свод, как было раньше
+#   SIMPLE_LANGUAGE_MODE=full      — всегда полный свод
 #   SIMPLE_LANGUAGE_MODE=off       — молчать
 #
 # Оговорка. Лозунг «пиши, сокращай» сознательно НЕ взят: модель читает его буквально как
 # «короче» и снова начинает рубить мысли до обрывков, что работает против пункта 2.
 
 SL_INPUT=$(cat)
-SL_FULL='WRITE SIMPLY — rule for English prose (chat and documents; not for code, commit messages, or other languages): 1) Lead with the point — the first sentence is the answer, then details in falling order of importance (inverted pyramid). 2) MOST OFTEN BROKEN: write full, plain sentences, not headline fragments — each idea is a complete sentence with a subject and a verb; check any sentence over 25 words and split it. 3) Use short, everyday words; avoid formal or Latinate ones (utilise->use, in order to->to, approximately->about). 4) Use the active voice and strong verbs; do not hide a verb inside a noun (conduct an analysis->analyse, make a decision->decide). 5) Write to the reader as '\''you'\'' and in the present tense; explain a specialist term the first time you use it and spell out an abbreviation on first use. 6) Keep the tone neutral and factual — no subjective adjectives, no hype, no ALL-CAPS runs. 7) Format generously, on purpose: a bulleted list for equal unordered items, a numbered list for steps, a paragraph for connected reasoning; a single item is a paragraph, not a list. Keep paragraphs short (up to about five sentences). Structure is carried by headings (####, #####), not by bold; do not skip levels (## then ###). Put the meaningful word at the front of every heading, item, and paragraph. A long section is a short lead plus several labelled pieces, not one wall of text; put a caveat or note in a blockquote (>). 8) Every link'\''s text names where it goes — never '\''here'\'', '\''click here'\'', or a bare URL. 9) Before sending, reread and read one paragraph aloud — ask not '\''is it shorter'\'' but '\''is it clear on the first read'\''. Full rules — the '\''plain-english'\'' skill (load it for documents and long text).'
+SL_FULL='WRITE SIMPLY — rules for English prose (chat and documents; not code, commit messages, or other languages). 1) Lead with the point: the first sentence is the answer, details after it. 2) MOST OFTEN BROKEN: write full sentences with a subject and a verb, one idea each, never headline fragments; check anything over 25 words and split it. 3) Use short everyday words (utilise->use, in order to->to, approximately->about). 4) Use the active voice; do not hide a verb inside a noun (conduct an analysis->analyse, make a decision->decide). 5) Write to the reader as '\''you'\'' and in the present tense; explain a specialist term the first time you use it and spell out an abbreviation on first use. 6) Keep the tone neutral and factual: no subjective adjectives, no hype, no ALL-CAPS runs. 7) Give a number meaning: say what the figure means for the reader. 8) Format on purpose: a bulleted list for equal unordered items, a numbered list for steps, a paragraph for connected reasoning; keep paragraphs short; put the meaningful word first in every heading, item, and paragraph; name a link by its destination, never '\''here'\'' or a bare URL. 9) Before sending, read a paragraph aloud: ask not '\''is it shorter'\'' but '\''is it clear on the first read'\''. Formatting detail (tables, images and alt text, heading levels, accessibility) and the full rules with examples live in the '\''plain-english'\'' skill — load it for documents and long text.'
 SL_SHORT='WRITE SIMPLY (short reminder): full sentences with a subject and a verb, one idea each; lead with the point; everyday words; active voice; explain jargon once; give numbers meaning; format generously with headings, lists, and short paragraphs. English prose only, not code or commit messages. Full rules: the plain-english skill.'
 export SL_INPUT SL_FULL SL_SHORT
 

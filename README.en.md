@@ -28,6 +28,8 @@ Claude stops writing dense paragraphs full of jargon and starts explaining in ev
 
 - **Claude Code**, in a version that understands skills and hooks.
 - **Node.js**, which only the checker needs, because the skill and the hook run without it (we tested the checker on Node 24).
+  - If you do not have it, there are three ways to get it. Ask Claude to install Node.js for you. Or download the installer from [nodejs.org](https://nodejs.org) and press the LTS button. Or, on a Mac with Homebrew, run `brew install node`.
+  - The installer checks for Node and prints the same hint.
 - **The `~/.claude` folder**, which appears on its own after you first run Claude Code.
 
 ## Install
@@ -112,11 +114,11 @@ A spoken request lasts a few messages and then fades, because the conversation m
 
 The hook pays per message you send, and its copies stay in the conversation history. So it sends the full rulebook rarely.
 
-- **The full rulebook** goes out on the first message and every tenth after that.
-- **A short reminder** of 329 characters goes out on every other turn, about a fifth of the full text.
+- **The full rulebook** goes out on the first message and every tenth after that. It runs to 1,418 characters and carries only what slips in conversation, because the formatting detail lives in the skill.
+- **A short reminder** of 329 characters goes out on every other turn, about a quarter of the full text.
 - **Housekeeping messages get nothing.** That covers a slash command, a file path, a bare URL, and short replies such as "yes" or "ok".
 
-Across a 50-message conversation that comes to roughly 20,000 characters instead of 86,000, about a quarter of the old cost.
+Across a 50-message conversation that comes to roughly 19,000 characters. The first version of the hook cost 86,000, so the bill is now about a quarter of that.
 
 Environment variables change the behaviour:
 

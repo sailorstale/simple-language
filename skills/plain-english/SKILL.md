@@ -184,7 +184,7 @@ Run your eye down these points.
 
 ## Machine check
 
-A companion script can check a document against parts of these rules — long sentences, passive voice, hidden verbs, weak-word swaps, and bare link text. If a checker is set up for this skill, its usage lives in `references/` beside this file. The check never fixes anything and is not always right; a person decides.
+A companion script checks a document against parts of these rules: long sentences, passive voice, hidden verbs, formal words, ALL-CAPS runs, and bare link text. How to run it and what it flags are in [references/prose-check.md](references/prose-check.md). The check never fixes anything and is not always right; a person decides.
 
 ## What not to do
 

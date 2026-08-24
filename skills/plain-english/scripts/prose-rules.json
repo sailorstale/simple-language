@@ -5,9 +5,15 @@
     "'formal' — formal or long words with a safe plain replacement (strict finding).",
     "'hidden-verbs' — a verb hidden inside a noun; turn it back into the verb (strict finding).",
     "'empty-links' — link text that says nothing about the target (strict finding).",
-    "'hype' — subjective marketing adjectives; shown only with --all (advisory)."
+    "'hype' — subjective marketing adjectives; shown only with --all (advisory).",
+    "\"easy\" — words that call the reader's work easy; they carry no fact.",
+    "\"loaded\" — biased or imprecise terms and their replacements.",
+    "\"latin\" — abbreviations to write out in words.",
+    "\"empty-openers\" — openers that take the first slot instead of the action.",
+    "\"paragraph-openers\" — words a paragraph does not start with.",
+    "\"hidden-negatives\" — words carrying a hidden \"not\", used to count double negatives.",
+    "\"chatty\" — internet shorthand and false togetherness."
   ],
-
   "formal": {
     "utilise": "use",
     "utilize": "use",
@@ -30,7 +36,6 @@
     "at this time": "now",
     "at present": "now"
   },
-
   "hidden-verbs": {
     "conduct an analysis of": "analyse",
     "make a decision": "decide",
@@ -42,19 +47,119 @@
     "make an application": "apply",
     "is responsible for the management of": "manages"
   },
-
   "empty-links": [
-    "here", "click here", "go here", "see here", "click", "tap here",
-    "read more", "learn more", "more", "details", "this", "this one",
-    "this document", "this article", "this page", "this link", "this post",
-    "link", "website", "site", "url"
+    "here",
+    "click here",
+    "go here",
+    "see here",
+    "click",
+    "tap here",
+    "read more",
+    "learn more",
+    "more",
+    "details",
+    "this",
+    "this one",
+    "this document",
+    "this article",
+    "this page",
+    "this link",
+    "this post",
+    "link",
+    "website",
+    "site",
+    "url"
   ],
-
   "hype": [
-    "brilliant", "seamless", "world-class", "cutting-edge", "cutting edge",
-    "revolutionary", "amazing", "incredible", "game-changing", "game changing",
-    "best-in-class", "state-of-the-art", "next-generation", "next-gen",
-    "delightful", "effortless", "innovative", "unparalleled", "unrivalled",
-    "blazing-fast", "supercharged"
+    "brilliant",
+    "seamless",
+    "world-class",
+    "cutting-edge",
+    "cutting edge",
+    "revolutionary",
+    "amazing",
+    "incredible",
+    "game-changing",
+    "game changing",
+    "best-in-class",
+    "state-of-the-art",
+    "next-generation",
+    "next-gen",
+    "delightful",
+    "effortless",
+    "innovative",
+    "unparalleled",
+    "unrivalled",
+    "blazing-fast",
+    "supercharged"
+  ],
+  "easy": [
+    "simply",
+    "it's easy",
+    "it is easy",
+    "easily",
+    "just click",
+    "just run",
+    "just add",
+    "just open",
+    "it's simple",
+    "it is simple",
+    "quick and easy",
+    "in no time",
+    "effortlessly"
+  ],
+  "loaded": {
+    "master": "primary or main: \"the main node (called master in code)\"",
+    "slave": "secondary or replica",
+    "whitelist": "allowlist",
+    "blacklist": "denylist",
+    "sanity check": "final check for completeness",
+    "dummy": "placeholder",
+    "man-hours": "person-hours",
+    "mankind": "humanity",
+    "crazy": "say what actually happens",
+    "insane": "say what actually happens",
+    "hangs": "stops responding",
+    "grandfathered": "exempt under the earlier rule"
+  },
+  "latin": {
+    "e.g.": "for example",
+    "i.e.": "that is",
+    "etc.": "and so on",
+    "viz.": "namely",
+    "N.B.": "note"
+  },
+  "empty-openers": {
+    "there is": "start with the action instead",
+    "there are": "start with the action instead",
+    "it is possible to": "say what to do",
+    "there exists": "name the thing itself"
+  },
+  "paragraph-openers": [
+    "therefore",
+    "thus",
+    "however",
+    "consequently",
+    "hence",
+    "accordingly"
+  ],
+  "hidden-negatives": [
+    "unless",
+    "fail to",
+    "notwithstanding",
+    "except",
+    "unlawful",
+    "insufficient",
+    "unable",
+    "cannot",
+    "without"
+  ],
+  "chatty": [
+    "let's",
+    "lets ",
+    "tl;dr",
+    "ymmv",
+    "imho",
+    "afaik"
   ]
 }

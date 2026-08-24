@@ -193,6 +193,124 @@ function checkList(file, { n, text, raw }) {
     add(file, n, 'список', true, body, 'пункт не помещается в одно предложение — это был абзац')
 }
 
+// Google, tone: работу читателя не называют лёгкой — если не вышло, слово «просто» винит его.
+function checkEasy(file, { n, text }) {
+  const low = text.toLowerCase()
+  for (const w of rules['лёгкость'] || []) {
+    if (low.includes(w)) add(file, n, 'лёгкость', true, text, `«${w}» не сообщает факта — напиши, сколько шагов или сколько времени займёт дело`)
+  }
+}
+
+// Microsoft bias-free, Google inclusive: задевающие и неточные термины.
+function checkLoaded(file, { n, text }) {
+  for (const [w, replace] of Object.entries(rules['нагруженные'] || {})) {
+    if (wordRe(w).test(text)) add(file, n, 'нагруженное', true, text, `«${w}» → ${replace}`)
+  }
+}
+
+// Federal PL Guidelines, GOV.UK: латинские сокращения пишут словами.
+function checkLatin(file, { n, text }) {
+  const low = text.toLowerCase()
+  for (const [w, replace] of Object.entries(rules['латинские'] || {})) {
+    if (low.includes(w)) add(file, n, 'латинское', true, text, `«${w}» → ${replace}`)
+  }
+}
+
+// Federal PL Guidelines: косая черта перекладывает выбор значения на читателя.
+function checkSlash(file, { n, text }) {
+  const m = text.match(/(^|[^А-Яа-яёЁA-Za-z])(и\/или|and\/or)([^А-Яа-яёЁA-Za-z]|$)/i) ||
+    text.match(/(^|[^\wА-Яа-яёЁ\/.-])[А-Яа-яёЁ]{3,}\/[А-Яа-яёЁ]{3,}(?![\wА-Яа-яёЁ\/.-])/)
+  if (m) add(file, n, 'косая', true, m[0], 'разверни: «или», «и» или «X, Y или оба сразу»')
+}
+
+// Google dates: 12/02/2027 читают то как 12 февраля, то как 2 декабря.
+function checkDate(file, { n, text }) {
+  const m = text.match(/\b(\d{1,2})[./](\d{1,2})[./](\d{2}|\d{4})\b/)
+  if (m && +m[1] <= 31 && +m[2] <= 12)
+    add(file, n, 'дата', true, m[0], 'месяц словом: «19 января 2027», а для машинной записи ГГГГ-ММ-ДД')
+}
+
+// Microsoft top-10: пустой зачин съедает первое, самое заметное место в строке.
+function checkEmptyStart(file, { n, text, raw }) {
+  if (raw.trim().startsWith('#')) return
+  const low = text.toLowerCase()
+  for (const [w, hint] of Object.entries(rules['пустой-зачин'] || {})) {
+    if (low.includes(w)) add(file, n, 'зачин', true, text, `«${w}» — ${hint}`)
+  }
+}
+
+// Microsoft global communications: больше двух частей через «и», «или», «но» читаются тяжело.
+function checkConjunctions(file, { n, text, raw }) {
+  if (raw.trim().startsWith('|') || raw.trim().startsWith('#')) return
+  for (const s of text.split(/(?<=[.!?…])\s+/)) {
+    const c = (s.match(/\s(и|или|но)\s/gi) || []).length
+    if (c >= 3) add(file, n, 'союзы', true, s, `${c} союза в одном предложении — третью часть вынеси отдельным предложением`)
+  }
+}
+
+// Ильяхов, логика абзаца: абзац читают с первого слова, поэтому связка в начале отправляет назад.
+function checkParagraphStart(file, { n, raw }, prevBlank) {
+  if (!prevBlank) return
+  const t = raw.trim()
+  if (!t || /^[#>|\-*\d]/.test(t)) return
+  const first = t.replace(/^\*\*/, '').toLowerCase().match(/^[а-яё]+/)
+  if (first && (rules['связки-абзаца'] || []).includes(first[0]))
+    add(file, n, 'связка-абзаца', true, t, `абзац не начинают со связки «${first[0]}» — поставь вперёд значимое слово`)
+}
+
+// Microsoft, writing for all abilities: программа чтения такие знаки пропускает или читает неверно.
+function checkSpecialChars(file, { n, text, raw }) {
+  if (raw.trim().startsWith('|')) return
+  const m = text.match(/\s([&+~])\s/)
+  if (m) add(file, n, 'знак', true, text, `знак «${m[1]}» замени словом: «и», «плюс», «около»`)
+}
+
+// GOV.UK: точки внутри сокращения не ставят.
+function checkAbbrDots(file, { n, text }) {
+  const m = text.match(/(^|[^А-Яа-яёЁA-Za-z])(([А-ЯA-Z]\.){2,})/)
+  if (m) add(file, n, 'сокращение', true, m[2], 'точки внутри сокращения не ставят: пиши слитно заглавными')
+}
+
+// NNG chunking: слитная цепочка цифр не читается и не проверяется взглядом.
+function checkLongNumber(file, { n, text, raw }) {
+  if (raw.trim().startsWith('|')) return
+  const m = text.match(/(^|[^\d.,/:-])(\d{6,})([^\d.,/:-]|$)/)
+  if (m) add(file, n, 'длинное-число', true, m[2], 'разбей на группы: «4111 1111 1111 1111» вместо слитной цепочки')
+}
+
+// Federal PL Guidelines: два отрицания в предложении разбираются неправильно примерно в половине случаев.
+function checkDoubleNegative(file, { n, text }) {
+  if (!SHOW_ALL) return
+  for (const s of text.split(/(?<=[.!?…])\s+/)) {
+    let c = (s.match(/(^|[^А-Яа-яёЁ])(не|ни)([^А-Яа-яёЁ]|$)/gi) || []).length
+    for (const w of rules['отрицание-скрытое'] || []) if (wordRe(w).test(s)) c++
+    if (c >= 2) add(file, n, 'отрицание', false, s, `${c} отрицания в предложении — сверни в одно утверждение`)
+  }
+}
+
+// Google, procedures: нумерованный список нужен для последовательности, а из одного шага её нет.
+function checkSingleStepList(file, lines) {
+  let start = -1
+  let count = 0
+  const flush = () => {
+    if (count === 1 && start >= 0)
+      add(file, start, 'один-пункт', true, 'нумерованный список из одного пункта', 'один шаг оформляют маркированным пунктом или абзацем')
+    start = -1
+    count = 0
+  }
+  // Список рвём только заголовком: между шагами часто стоят блоки кода и поясняющий текст.
+  for (const { n, raw } of lines) {
+    const t = raw.trim()
+    if (/^\d+[.)]\s/.test(t)) {
+      if (start < 0) start = n
+      count++
+    } else if (t.startsWith('#')) {
+      flush()
+    }
+  }
+  flush()
+}
+
 // ── Прогон ──────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -203,7 +321,9 @@ for (const file of files) {
     missing++
     continue
   }
-  for (const line of readLines(file)) {
+  const lines = readLines(file)
+  let prevBlank = true
+  for (const line of lines) {
     checkWords(file, line)
     checkLinks(file, line)
     checkLinkText(file, line)
@@ -211,7 +331,21 @@ for (const file of files) {
     checkLong(file, line)
     checkPercent(file, line)
     checkList(file, line)
+    checkEasy(file, line)
+    checkLoaded(file, line)
+    checkLatin(file, line)
+    checkSlash(file, line)
+    checkDate(file, line)
+    checkEmptyStart(file, line)
+    checkConjunctions(file, line)
+    checkParagraphStart(file, line, prevBlank)
+    checkSpecialChars(file, line)
+    checkAbbrDots(file, line)
+    checkLongNumber(file, line)
+    checkDoubleNegative(file, line)
+    prevBlank = line.raw.trim() === ''
   }
+  checkSingleStepList(file, lines)
 }
 
 // ── Отчёт ───────────────────────────────────────────────────────────────────
@@ -226,6 +360,19 @@ const NAMES = {
   проценты: 'Проценты вместо долей',
   список: 'Список, который был абзацем',
   подозрение: 'Возможный образ (проверь глазами)',
+  'лёгкость': 'Работа читателя названа лёгкой',
+  'нагруженное': 'Задевающий или неточный термин',
+  'латинское': 'Латинское сокращение вместо слов',
+  'косая': 'Косая черта вместо слова',
+  'дата': 'Дата цифрами читается двояко',
+  'зачин': 'Пустой зачин вместо действия',
+  'союзы': 'Три и больше союзов в предложении',
+  'связка-абзаца': 'Абзац начинается со связки',
+  'знак': 'Спецсимвол вместо слова',
+  'сокращение': 'Точки внутри сокращения',
+  'длинное-число': 'Длинное число не разбито на группы',
+  'отрицание': 'Двойное отрицание (проверь глазами)',
+  'один-пункт': 'Нумерованный список из одного пункта',
 }
 
 const byFile = new Map()

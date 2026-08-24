@@ -104,6 +104,34 @@ That is the core. The full formatting catalog lives in [references/formatting.md
 
 Lead with meaning, and move deep mechanism to the end or behind a clear heading. In a step-by-step task, put a prerequisite before the step, never hidden in an aside. Long derivations can wait until the reader asks for them.
 
+## Small rules the checker enforces
+
+Each one is short, checkable, and drawn from the guides listed at the end of this section.
+
+- **Never call the reader's work easy.** Words like `simply` carry no fact; say how many steps the job takes.
+- **Write Latin abbreviations out:** "for example" instead of `e.g.`, "that is" instead of `i.e.`.
+- **Turn a slash into a word:** `and/or` becomes "or", "and", or "X, Y, or both".
+- **Spell the month in a date:** "19 January 2027" reads one way, while `12/02/2027` reads as two different days.
+- **Open a statement with the action:** `there is` and `it is possible to` take the most visible slot in the line.
+- **Do not string more than two parts** with "and", "or", or "but"; move the third part into its own sentence.
+- **A paragraph never opens with a connector** such as "therefore" or "thus", because readers scan by first words.
+- **Replace signs with words:** a screen reader skips or misreads `&`, `+`, and `~`.
+- **Drop the stops inside an abbreviation** and write it as solid capitals.
+- **Group a long number:** "4111 1111 1111 1111" reads at a glance, while an unbroken run does not.
+- **Swap loaded terms for precise ones:** "stops responding" describes the behaviour, while `hangs` describes nothing.
+- **Write a range with a word:** "10 to 11", because a hyphen reads as a minus sign and a screen reader skips it.
+- **Keep exclamation marks, `let's`, and internet shorthand out**, because the reader acts alone and pressure is not a fact.
+- **A single step is not a numbered list**, because numbering carries a sequence.
+- **Fold a double negative into one positive statement**, because readers get two negatives wrong about half the time.
+
+These rules come from five guides. They are:
+
+- the [Google developer documentation style guide](https://developers.google.com/style);
+- the [Microsoft Writing Style Guide](https://learn.microsoft.com/en-us/style-guide/welcome/);
+- the [US federal plain-language guidelines](https://www.plainlanguage.gov/guidelines/);
+- the [GOV.UK style guide](https://www.gov.uk/guidance/style-guide);
+- [Nielsen Norman Group](https://www.nngroup.com/articles/chunking/) research on how people read.
+
 ## How to fix a heavy sentence
 
 These moves take the weight out of a sentence without cutting a fact, an example, or an explanation. They work through grammar, not through deletion.

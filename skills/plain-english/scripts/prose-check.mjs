@@ -157,6 +157,140 @@ function checkHype(file, { n, text }) {
   }
 }
 
+// Google, tone: never call the reader's work easy — if it fails, the word blames them.
+function checkEasy(file, { n, text }) {
+  const low = text.toLowerCase()
+  for (const w of rules['easy'] || []) {
+    if (low.includes(w)) add(file, n, 'easy', true, text, `"${w}" states no fact — say how many steps or how long it takes`)
+  }
+}
+
+// Microsoft bias-free, Google inclusive documentation.
+function checkLoaded(file, { n, text }) {
+  for (const [w, rep] of Object.entries(rules['loaded'] || {})) {
+    if (phraseRe(w).test(text)) add(file, n, 'loaded', true, text, `"${w}" -> ${rep}`)
+  }
+}
+
+// Federal PL Guidelines, GOV.UK: write Latin abbreviations out.
+function checkLatin(file, { n, text }) {
+  const low = text.toLowerCase()
+  for (const [w, rep] of Object.entries(rules['latin'] || {})) {
+    if (low.includes(w.toLowerCase())) add(file, n, 'latin', true, text, `"${w}" -> ${rep}`)
+  }
+}
+
+// Google, tone: no exclamation marks, no "let's", no internet shorthand.
+function checkChatty(file, { n, text, raw }) {
+  if (raw.trim().startsWith('|')) return
+  const low = text.toLowerCase()
+  for (const w of rules['chatty'] || []) {
+    if (low.includes(w)) add(file, n, 'chatty', true, text, `"${w.trim()}" — say it plainly; the reader acts alone`)
+  }
+  if (/!(\s|$)/.test(text) && !/^\s*[-*]?\s*!\[/.test(text))
+    add(file, n, 'chatty', true, text, 'an exclamation mark adds pressure, not a fact')
+}
+
+// Federal PL Guidelines: a slash pushes the choice of meaning onto the reader.
+function checkSlash(file, { n, text }) {
+  const m = text.match(/\band\/or\b/i) ||
+    text.match(/(^|[^\w/.-])[A-Za-z]{3,}\/[A-Za-z]{3,}(?![\w/.-])/)
+  if (m) add(file, n, 'slash', true, m[0], 'write it out: "or", "and", or "X, Y, or both"')
+}
+
+// Google, dates and times: 12/02/2027 reads as two different days.
+function checkDate(file, { n, text }) {
+  const m = text.match(/\b(\d{1,2})[./](\d{1,2})[./](\d{2}|\d{4})\b/)
+  if (m && +m[1] <= 31 && +m[2] <= 12)
+    add(file, n, 'date', true, m[0], 'spell the month: "19 January 2027", or use ISO YYYY-MM-DD for machines')
+}
+
+// Microsoft top-10 tips: an empty opener eats the most visible slot in the line.
+function checkEmptyOpener(file, { n, text, raw }) {
+  if (raw.trim().startsWith('#')) return
+  for (const [w, hint] of Object.entries(rules['empty-openers'] || {})) {
+    if (phraseRe(w).test(text)) add(file, n, 'opener', true, text, `"${w}" — ${hint}`)
+  }
+}
+
+// Microsoft global communications: more than two parts strung with and/or/but read heavily.
+function checkConjunctions(file, { n, text, raw }) {
+  if (raw.trim().startsWith('|') || raw.trim().startsWith('#')) return
+  for (const s of text.split(/(?<=[.!?])\s+/)) {
+    const c = (s.match(/\s(and|or|but)\s/gi) || []).length
+    if (c >= 3) add(file, n, 'conjunctions', true, s, `${c} conjunctions in one sentence — move the third part to its own sentence`)
+  }
+}
+
+// A paragraph is scanned from its first word, so a connector there sends the reader back.
+function checkParagraphStart(file, { n, raw }, prevBlank) {
+  if (!prevBlank) return
+  const t = raw.trim()
+  if (!t || /^[#>|\-*\d]/.test(t)) return
+  const first = t.replace(/^\*\*/, '').toLowerCase().match(/^[a-z]+/)
+  if (first && (rules['paragraph-openers'] || []).includes(first[0]))
+    add(file, n, 'para-opener', true, t, `a paragraph does not open with "${first[0]}" — put the meaningful word first`)
+}
+
+// Microsoft, writing for all abilities: a screen reader skips or misreads these signs.
+function checkSpecialChars(file, { n, text, raw }) {
+  if (raw.trim().startsWith('|')) return
+  const m = text.match(/\s([&+~])\s/)
+  if (m) add(file, n, 'sign', true, text, `replace "${m[1]}" with a word: "and", "plus", "about"`)
+}
+
+// GOV.UK: no full stops inside an abbreviation.
+function checkAbbrDots(file, { n, text }) {
+  const m = text.match(/(^|[^A-Za-z])(([A-Z]\.){2,})/)
+  if (m) add(file, n, 'abbr', true, m[2], 'drop the stops inside an abbreviation: write it as solid capitals')
+}
+
+// NNG chunking: an unbroken run of digits cannot be read or checked at a glance.
+function checkLongNumber(file, { n, text, raw }) {
+  if (raw.trim().startsWith('|')) return
+  const m = text.match(/(^|[^\d.,/:v-])(\d{6,})(?!\d|[.,:/-]\d)/)
+  if (m) add(file, n, 'digits', true, m[2], 'group the digits: "4111 1111 1111 1111", not one unbroken run')
+}
+
+// GOV.UK: a hyphen in a range reads as a minus sign and a screen reader skips it.
+function checkRange(file, { n, text, raw }) {
+  if (raw.trim().startsWith('|') || raw.trim().startsWith('#')) return
+  const m = text.match(/(^|[^\w-])(\d{1,4})\s?[-–]\s?(\d{1,4})(?![\d-])/)
+  if (m) add(file, n, 'range', true, `${m[2]}-${m[3]}`, `write the range with a word: "${m[2]} to ${m[3]}"`)
+}
+
+// Federal PL Guidelines: readers get two negatives in one sentence wrong about half the time.
+function checkDoubleNegative(file, { n, text }) {
+  if (!SHOW_ALL) return
+  for (const s of text.split(/(?<=[.!?])\s+/)) {
+    let c = (s.match(/\b(not|no|never|n't)\b/gi) || []).length
+    for (const w of rules['hidden-negatives'] || []) if (phraseRe(w).test(s)) c++
+    if (c >= 2) add(file, n, 'negatives', false, s, `${c} negatives in one sentence — fold them into one positive statement`)
+  }
+}
+
+// Google, procedures: a numbered list carries a sequence, and one step has none.
+function checkSingleStepList(file, lines) {
+  let start = -1
+  let count = 0
+  const flush = () => {
+    if (count === 1 && start >= 0)
+      add(file, start, 'one-step', true, 'numbered list with a single item', 'a single step belongs in a bullet or a paragraph')
+    start = -1
+    count = 0
+  }
+  for (const { n, raw } of lines) {
+    const t = raw.trim()
+    if (/^\d+[.)]\s/.test(t)) {
+      if (start < 0) start = n
+      count++
+    } else if (t.startsWith('#')) {
+      flush()
+    }
+  }
+  flush()
+}
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -167,7 +301,9 @@ for (const file of files) {
     missing++
     continue
   }
-  for (const line of readLines(file)) {
+  const lines = readLines(file)
+  let prevBlank = true
+  for (const line of lines) {
     checkFormal(file, line)
     checkHidden(file, line)
     checkLinkText(file, line)
@@ -175,7 +311,23 @@ for (const file of files) {
     checkCaps(file, line)
     checkPassive(file, line)
     checkHype(file, line)
+    checkEasy(file, line)
+    checkLoaded(file, line)
+    checkLatin(file, line)
+    checkChatty(file, line)
+    checkSlash(file, line)
+    checkDate(file, line)
+    checkEmptyOpener(file, line)
+    checkConjunctions(file, line)
+    checkParagraphStart(file, line, prevBlank)
+    checkSpecialChars(file, line)
+    checkAbbrDots(file, line)
+    checkLongNumber(file, line)
+    checkRange(file, line)
+    checkDoubleNegative(file, line)
+    prevBlank = line.raw.trim() === ''
   }
+  checkSingleStepList(file, lines)
 }
 
 // ── Report ───────────────────────────────────────────────────────────────────
@@ -188,6 +340,21 @@ const NAMES = {
   caps: 'ALL-CAPS run',
   passive: 'Possible passive voice (advisory)',
   hype: 'Subjective / hype adjective (advisory)',
+  easy: "The reader's work called easy",
+  loaded: 'Biased or imprecise term',
+  latin: 'Latin abbreviation instead of words',
+  chatty: 'Exclamation mark, "let\'s", or shorthand',
+  slash: 'Slash instead of a word',
+  date: 'All-digit date reads two ways',
+  opener: 'Empty opener instead of the action',
+  conjunctions: 'Three or more conjunctions in a sentence',
+  'para-opener': 'Paragraph opens with a connector',
+  sign: 'Sign instead of a word',
+  abbr: 'Full stops inside an abbreviation',
+  digits: 'Long number not grouped',
+  range: 'Range written with a hyphen',
+  negatives: 'Double negative (advisory)',
+  'one-step': 'Numbered list with a single item',
 }
 
 const byFile = new Map()

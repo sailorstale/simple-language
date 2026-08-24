@@ -30,6 +30,21 @@ Strict findings point at something the rules name outright. Advisory findings ar
 | A run of words in capital letters | strict |
 | Possible passive voice | advisory |
 | A subjective or hype adjective, such as `seamless` | advisory, needs `--all` |
+| The reader's work called easy (`simply`, `easily`) | strict |
+| A loaded or imprecise term (`whitelist`, `hangs`) | strict |
+| A Latin abbreviation (`e.g.`, `i.e.`, `etc.`) | strict |
+| An exclamation mark, `let's`, or internet shorthand | strict |
+| A slash standing in for a word (`and/or`) | strict |
+| An all-digit date such as `12/02/2027` | strict |
+| An empty opener (`there is`, `it is possible to`) | strict |
+| Three or more conjunctions in one sentence | strict |
+| A paragraph opening with `therefore` or `thus` | strict |
+| A sign used as a word (`&`, `+`, `~`) | strict |
+| Full stops inside an abbreviation | strict |
+| A long unbroken run of digits | strict |
+| A range written with a hyphen | strict |
+| A numbered list holding a single item | strict |
+| A double negative in one sentence | advisory, needs `--all` |
 
 The script ignores what the rules do not govern: front matter, fenced code blocks, inline code, link targets, and any line holding 🚫, ✅, or ❌, because those lines are deliberate examples of poor writing.
 
@@ -39,4 +54,4 @@ The check fixes nothing. It shows the spot and says what is wrong, and you decid
 
 ## Extending the word lists
 
-The words live beside the script in `prose-rules.json`, under four keys: `formal`, `hidden-verbs`, `empty-links`, and `hype`. Edit them by hand. Spot a formal word the check missed, add a line with its plain replacement, and the check gets better for every document after it.
+The words live beside the script in `prose-rules.json`, under these keys: `formal`, `hidden-verbs`, `empty-links`, `hype`, `easy`, `loaded`, `latin`, `empty-openers`, `paragraph-openers`, `hidden-negatives`, and `chatty`. Edit them by hand. Spot a formal word the check missed, add a line with its plain replacement, and the check gets better for every document after it.

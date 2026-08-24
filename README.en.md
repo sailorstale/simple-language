@@ -28,7 +28,9 @@ Claude stops writing dense paragraphs full of jargon and starts explaining in ev
 
 - **Claude Code**, in a version that understands skills and hooks.
 - **Node.js**, which only the checker needs, because the skill and the hook run without it (we tested the checker on Node 24).
-  - If you do not have it, there are three ways to get it. Ask Claude to install Node.js for you. Or download the installer from [nodejs.org](https://nodejs.org) and press the LTS button. Or, on a Mac with Homebrew, run `brew install node`.
+    - The simplest way is to ask Claude to install Node.js for you.
+  - The second way is to download the installer from [nodejs.org](https://nodejs.org) and press the LTS button.
+  - The third way suits a Mac with Homebrew: `brew install node`.
   - The installer checks for Node and prints the same hint.
 - **The `~/.claude` folder**, which appears on its own after you first run Claude Code.
 
@@ -106,7 +108,7 @@ The set has three parts, and each does a different job.
 
 The three parts cover different gaps. The hook always arrives, but it carries only nine main points. The skill explains in depth, yet Claude opens it rarely. And the checker catches what slipped through anyway, because a writer cannot see their own mistakes.
 
-### Why not just ask Claude to write more simply
+### Why a skill beats asking Claude for plainer writing
 
 A spoken request lasts a few messages and then fades, because the conversation moves on and old instructions sink out of view. The hook arrives with every message, so it never wears off. A request also holds one or two ideas, while the skill holds rules with examples and reasoning that no request has room for.
 

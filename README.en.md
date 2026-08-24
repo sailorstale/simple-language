@@ -21,17 +21,32 @@ The set holds nineteen rules on language and twelve more on formatting. One look
 **Lead with the point.** The first sentence answers the question, and the detail follows it.
 
 > 🚫 "In order to ensure compliance with the updated requirements, applicants are advised that a review of the following sections should be undertaken."
+>
 > ✅ "Read these three sections before you apply. They tell you how to meet the new requirements."
 
 **Name the actor.** The passive voice hides who does the work, so the reader has to guess.
 
 > 🚫 "The form must be completed by the applicant."
+>
 > ✅ "You must complete the form."
 
 **Give the number meaning.** A bare figure says nothing; a ratio lands.
 
 > 🚫 "The change affects 4,200 records."
+>
 > ✅ "The change affects 4,200 records, about one in every five in the database."
+
+## A few formatting rules
+
+Half the work goes into how the text sits on the page. Here are five rules from that part of the set.
+
+- **A paragraph runs three to seven lines**, and a new topic or step starts a new paragraph.
+- **A list item fits in one sentence**, and if it runs longer it was a paragraph, so the detail moves into nested sub-items.
+- **A list of one item does not exist**, because a list shows that several equal things belong together.
+- **Headings carry the structure**, a bold line does not replace them, and levels run in order: `###` comes after `##`.
+- **Link text names its destination**, so "here", "this", and "read more" never become the link.
+
+The remaining rules cover images and their alt text, how to build a table, and the job of each formatting device. They also cover access for people who do not read with their eyes.
 
 ## Sources
 

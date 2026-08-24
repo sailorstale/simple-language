@@ -7,13 +7,13 @@ description: Plain-English writing rules — clear direct sentences, everyday wo
 
 These are rules for writing clear English. The one-line idea: write so the reader understands it the first time, without rereading. Use short everyday words, one idea per sentence, the active voice, and plenty of structure.
 
-The rules come from the established plain-language canon: the [US federal plain-language guidelines](https://www.plainlanguage.gov/guidelines/), the [GOV.UK content style guide](https://www.gov.uk/guidance/style-guide), the Microsoft and Google style guides, and the Nielsen Norman Group research on how people read online. Where a rule carries a specific number or example, it is attributed inline.
+The rules come from the established plain-language canon: the [US federal plain-language guidelines](https://www.plainlanguage.gov/guidelines/) and the [GOV.UK content style guide](https://www.gov.uk/guidance/style-guide). They also draw on the Microsoft and Google style guides and on Nielsen Norman Group research into how people read online. Where a rule carries a specific number or example, this skill names the source inline.
 
 Plain language does not mean dumbing the content down. The goal is text the reader grasps quickly and still recognises as correct. Clarity and accuracy go together, and when they seem to conflict, keep it accurate first, then make it as clear as the accuracy allows.
 
 ## Where these rules apply
 
-They apply to **English prose written for a human reader**. That covers documentation, articles, reports, product copy, onboarding and help text, and emails — anything that is connected language a person reads.
+They apply to **English prose written for a human reader**. That covers documentation, articles, reports, product copy, onboarding and help text, and emails — anything a person reads as connected language.
 
 They do **not** apply in a few places. They do not govern code or commit messages. They do not govern short interface labels, where exactness beats plain phrasing: button names, menu items, and field labels stay precise and technical. They do not govern legal or contractual wording, where the exact phrasing outranks its simplicity. And they do not govern text in other languages, which follows its own norms.
 
@@ -38,14 +38,14 @@ Prefer the plainest common word when two words carry the same meaning (plainlang
 
 | Instead of | Write |
 |---|---|
-| utilise | use |
-| obtain | get |
-| assist | help |
-| approximately | about |
-| commence | start |
-| in order to | to |
-| sufficient | enough |
-| regarding | about |
+| `utilise` | `use` |
+| `obtain` | `get` |
+| `assist` | `help` |
+| `approximately` | `about` |
+| `commence` | `start` |
+| `in order to` | `to` |
+| `sufficient` | `enough` |
+| `regarding` | `about` |
 
 ### 4. Use the active voice and strong verbs
 
@@ -54,7 +54,7 @@ The active voice makes clear who does what, and the passive hides the actor (pla
 > 🚫 **Poor:** "The form must be completed by the applicant."
 > ✅ **Better:** "You must complete the form."
 
-Do not hide a verb inside a noun. Turning a verb into a noun makes the sentence longer and weaker, so watch for endings like `-tion`, `-ment`, `-sion`, and `-ance` and turn the noun back into the verb.
+Do not hide a verb inside a noun. Turning a verb into a noun makes the sentence longer and weaker. Watch for endings like `-tion`, `-ment`, `-sion`, and `-ance`, and turn the noun back into the verb.
 
 > 🚫 **Poor:** "The team will conduct an analysis and make a decision."
 > ✅ **Better:** "The team will analyse the data and decide."
@@ -68,7 +68,7 @@ Address the reader as "you" where you can (GOV.UK). When you need the third pers
 
 ### 6. Explain jargon, and spell out an abbreviation once
 
-When a specialist term is needed, explain it the first time you use it. Spell out an abbreviation in full on first use, then use the short form for the rest of the page (GOV.UK). Do not assume the reader knows who "we" is — give the full name first.
+When you need a specialist term, explain it the first time you use it. Spell out an abbreviation in full on first use, then use the short form for the rest of the page (GOV.UK). Do not assume the reader knows who "we" is — give the full name first.
 
 > ✅ **Example:** "Open the frequently asked questions (FAQ) page. After that, you can just call it the FAQ."
 
@@ -76,7 +76,7 @@ Explaining a term does not mean removing every specialist word. Keep a real term
 
 ### 7. Keep the tone neutral and factual
 
-State facts plainly rather than colouring them. Subjective adjectives make text sound like spin and add no checkable information (GOV.UK), so cut "brilliant", "seamless", and "world-class". You do not need "please" or "please note" in instructions, and you do not put large runs of text in capital letters, which is hard to read and reads as shouting.
+State facts plainly rather than colouring them. Subjective adjectives make text sound like spin and add no checkable information (GOV.UK), so cut "brilliant", "seamless", and "world-class". You do not need "please" or "please note" in instructions. Long runs of capital letters are hard to read and come across as shouting, so leave them out.
 
 > 🚫 **Poor:** "Our brilliant new service makes everything wonderfully simple."
 > ✅ **Better:** "This service lets you renew online in about five minutes."
@@ -95,10 +95,10 @@ Headings let the reader scan and catch the gist. Lists replace a long comma sent
 Three things matter in every text, so keep them in mind here:
 
 - **Choose the device by the content.** Use a paragraph when ideas connect through reasoning ("so", "but"). Use a bulleted list when several items are equal and unordered. Use a numbered list for steps in sequence. A single item is not a list; it is a paragraph.
-- **Headings carry the structure, not bold.** Give a section with content of its own a real heading (`####`, `#####`), not a bold line. Do not skip levels: `##` is followed by `###`.
-- **A document breaks into pieces.** It is scanned before it is read, so a long section is a short lead plus several labelled pieces, one per idea, not one wall of text. Put the meaningful word at the front of every heading, item, and paragraph.
+- **Headings carry the structure, not bold.** Give a section with content of its own a real heading (`####`, `#####`), not a bold line. Do not skip levels: `###` comes after `##`.
+- **A document breaks into pieces.** Readers scan a document before they read it. A long section is therefore a short lead plus several labelled pieces, one per idea, not one wall of text. Put the meaningful word at the front of every heading, item, and paragraph.
 
-That is the core. The full formatting catalog lives in [references/formatting.md](references/formatting.md): lists in detail, images and alt text, scanning, headings, the job of each device, link text, tables, and accessibility. Open it when you format a long or complex document.
+That is the core. The full formatting catalog lives in [references/formatting.md](references/formatting.md). It covers lists in detail, images and alt text, scanning, headings, the job of each device, link text, tables, and accessibility. Open it when you format a long or complex document.
 
 ### 10. Put technical detail where the reader needs it
 
@@ -110,7 +110,7 @@ These moves take the weight out of a sentence without cutting a fact, an example
 
 ### 1. Turn a hidden verb back into a verb
 
-This is the most common reason text sounds bureaucratic even when the words are simple. A phrase like "provide assistance to" holds a verb that was turned into a noun. Give it back.
+This is the most common reason text sounds bureaucratic even when the words are simple. A phrase like `provide assistance to` holds a verb that someone turned into a noun. Give it back.
 
 > 🚫 **Poor:** "The department is responsible for the management of the fund."
 > ✅ **Better:** "The department manages the fund."
@@ -131,7 +131,7 @@ Fix a heavy sentence by moving parts, not by cutting them. The idea stays whole;
 
 ### 4. Cut intensifiers and filler
 
-Words like "very", "really", "quite", and "extremely" add no checkable fact, and readers skip them. Filler openers like "in order to", "at this time", and "going forward" do the same. Put a number, an action, or a comparison in the freed space.
+Words like "very", "really", "quite", and "extremely" add no checkable fact, and readers skip them. Filler openers like `in order to`, `at this time`, and `going forward` do the same. Put a number, an action, or a comparison in the freed space.
 
 > 🚫 **Poor:** "This is a very simple form."
 > ✅ **Better:** "This form has three fields and one button."

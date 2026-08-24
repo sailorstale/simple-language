@@ -91,6 +91,7 @@ function readLines(file) {
     }
     if (line.trim().startsWith('```')) { inCode = !inCode; continue }
     if (inCode) continue
+    if (/[🚫✅❌]/.test(line)) continue // строка с намеренным примером «плохо / хорошо»
     out.push({ n: i + 1, text: clean(line), raw: line })
   }
   return out

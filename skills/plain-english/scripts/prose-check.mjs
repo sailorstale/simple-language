@@ -135,7 +135,8 @@ function checkLong(file, { n, text, raw }) {
 }
 
 // Runs of ALL-CAPS words (shouting, hard to read). Single acronyms are fine.
-const capsRe = /\b([A-Z][A-Z0-9]{2,}(?:[ \t]+[A-Z][A-Z0-9]{2,})+)\b/
+// Три слова подряд заглавными — это крик; два подряд обычно название вроде W3C WAI.
+const capsRe = /\b([A-Z][A-Z0-9]{2,}(?:[ \t]+[A-Z][A-Z0-9]{2,}){2,})\b/
 function checkCaps(file, { n, text }) {
   const m = text.match(capsRe)
   if (m) add(file, n, 'caps', true, m[1], 'a run of ALL-CAPS text reads as shouting and is hard to read')

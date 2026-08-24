@@ -16,6 +16,27 @@ The rules live in your `~/.claude` folder and plug into Claude Code once. After 
 
 There are two sets, English and Russian. Install both, or only the language you write in.
 
+## Before and after
+
+The skill holds about ten rules, but one look shows what changes. Here are three pairs from the English set.
+
+**Lead with the point.** The first sentence answers the question, and the detail follows it.
+
+> 🚫 "In order to ensure compliance with the updated requirements, applicants are advised that a review of the following sections should be undertaken."
+> ✅ "Read these three sections before you apply. They tell you how to meet the new requirements."
+
+**Name the actor.** The passive voice hides who does the work, so the reader has to guess.
+
+> 🚫 "The form must be completed by the applicant."
+> ✅ "You must complete the form."
+
+**Give the number meaning.** A bare figure says nothing; a ratio lands.
+
+> 🚫 "The change affects 4,200 records."
+> ✅ "The change affects 4,200 records, about one in every five in the database."
+
+The Russian set works the same way and catches its own faults. Those are metaphors, unexplained jargon, fragments with no verb, and percentages where a ratio reads better.
+
 ## Sources
 
 These rules are not invented. They come from the style guides that governments and large companies already use.

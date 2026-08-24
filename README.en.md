@@ -110,7 +110,23 @@ A spoken request lasts a few messages and then fades, because the conversation m
 
 ### What the hook costs
 
-The hook adds about 1,700 characters to every message you send, roughly a third of a page. That cost lands on every message, including the shortest ones. If the trade does not suit you, install the skill without the hook. The rules then apply to long documents and to `/plain-english`, but not to ordinary chat.
+The hook pays per message you send, and its copies stay in the conversation history. So it sends the full rulebook rarely.
+
+- **The full rulebook** goes out on the first message and every tenth after that.
+- **A short reminder** of 329 characters goes out on every other turn, about a fifth of the full text.
+- **Housekeeping messages get nothing.** That covers a slash command, a file path, a bare URL, and short replies such as "yes" or "ok".
+
+Across a 50-message conversation that comes to roughly 20,000 characters instead of 86,000, about a quarter of the old cost.
+
+Environment variables change the behaviour:
+
+| Variable | What it does |
+|---|---|
+| `SIMPLE_LANGUAGE_FULL_EVERY=10` | how often the full rulebook goes out; every tenth message by default |
+| `SIMPLE_LANGUAGE_MODE=full` | always send the full rulebook, as the first versions did |
+| `SIMPLE_LANGUAGE_MODE=off` | stay quiet and send nothing |
+
+The hook needs `python3` to count messages. Without it, it falls back to the old behaviour and sends the full text every time.
 
 ### The checker reads your own writing too
 

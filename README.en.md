@@ -116,17 +116,17 @@ A spoken request lasts a few messages and then fades, because the conversation m
 
 The hook pays per message you send, and its copies stay in the conversation history. So it sends the full rulebook rarely.
 
-- **The full rulebook** goes out on the first message and every tenth after that. It runs to 1,418 characters and carries only what slips in conversation, because the formatting detail lives in the skill.
+- **The full rulebook** goes out once, on the first message of the session. It runs to 1,418 characters and carries only what slips in conversation, because the formatting detail lives in the skill.
 - **A short reminder** of 329 characters goes out on every other turn, about a quarter of the full text.
 - **Housekeeping messages get nothing.** That covers a slash command, a file path, a bare URL, and short replies such as "yes" or "ok".
 
-Across a 50-message conversation that comes to roughly 19,000 characters. The first version of the hook cost 86,000, so the bill is now about a quarter of that.
+Across a 50-message conversation that comes to roughly 14,000 characters. The first version of the hook cost 86,000, so the bill is now about a sixth of that.
 
 Environment variables change the behaviour:
 
 | Variable | What it does |
 |---|---|
-| `SIMPLE_LANGUAGE_FULL_EVERY=10` | how often the full rulebook goes out; every tenth message by default |
+| `SIMPLE_LANGUAGE_FULL_EVERY=10` | bring repeats back: the full rulebook then goes out every tenth message |
 | `SIMPLE_LANGUAGE_MODE=full` | always send the full rulebook, as the first versions did |
 | `SIMPLE_LANGUAGE_MODE=off` | stay quiet and send nothing |
 

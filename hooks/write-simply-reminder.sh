@@ -5,10 +5,10 @@
 # Устройство. Хук платится за КАЖДОЕ сообщение, и копии остаются в истории, поэтому
 # он несёт только то, что проседает в разговоре. Тонкости оформления документа сюда
 # не входят: они живут в скиле и подгружаются под большой текст. Полный свод уходит
-# редко, между ним идёт короткое напоминание, а служебные сообщения не получают ничего.
+# один раз за сессию, дальше идёт короткое напоминание, а служебные сообщения молчат.
 #
 # Настройки через переменные окружения:
-#   SIMPLE_LANGUAGE_FULL_EVERY=10  — каждое N-е сообщение получает полный свод (по умолчанию 10)
+#   SIMPLE_LANGUAGE_FULL_EVERY=10  — вернуть повторы: каждое N-е сообщение получает полный свод
 #   SIMPLE_LANGUAGE_MODE=full      — всегда полный свод
 #   SIMPLE_LANGUAGE_MODE=off       — молчать
 #
@@ -52,11 +52,16 @@ is_url = bool(re.fullmatch(r'https?://\S+', prompt))
 if not prompt or prompt.startswith('/') or low in SKIP or is_path or is_url:
     sys.exit(0)
 
-# 2. Полный свод уходит редко, короткое напоминание — в остальные ходы.
-try:
-    every = max(1, int(os.environ.get('SIMPLE_LANGUAGE_FULL_EVERY') or 10))
-except ValueError:
-    every = 10
+# 2. Полный свод уходит первым сообщением сессии, дальше идёт короткое напоминание.
+#    Переменная SIMPLE_LANGUAGE_FULL_EVERY возвращает повторы: с ней полный свод
+#    приходит каждый N-й ход.
+every = 0
+raw = os.environ.get('SIMPLE_LANGUAGE_FULL_EVERY')
+if raw:
+    try:
+        every = max(1, int(raw))
+    except ValueError:
+        every = 0
 
 n = 1
 if sid:
@@ -82,7 +87,7 @@ if sid:
     except Exception:
         pass
 
-text = full if (n - 1) % every == 0 else short
+text = full if (every and (n - 1) % every == 0) or (not every and n == 1) else short
 out = {'hookSpecificOutput': {'hookEventName': 'UserPromptSubmit', 'additionalContext': text}}
 print(json.dumps(out, ensure_ascii=False))
 PYEOF

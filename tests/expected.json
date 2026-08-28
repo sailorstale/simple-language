@@ -1,0 +1,52 @@
+{
+  "ru-narusheniya.md": {
+    "lang": "ru",
+    "findings": {
+      "Задевающий или неточный термин": 3,
+      "Работа читателя названа лёгкой": 2,
+      "Обрубленная фраза без глагола": 1,
+      "Запрещённая связка «не X, а Y»": 1,
+      "Абзац начинается со связки": 1,
+      "Латинское сокращение вместо слов": 1,
+      "Дата цифрами читается двояко": 1,
+      "Косая черта вместо слова": 1,
+      "Пустой зачин вместо действия": 1,
+      "Длинное число не разбито на группы": 1,
+      "Спецсимвол вместо слова": 1,
+      "Точки внутри сокращения": 1,
+      "Проценты вместо долей": 1,
+      "Жаргон без пояснения": 1,
+      "Три и больше союзов в предложении": 1,
+      "Нумерованный список из одного пункта": 1
+    }
+  },
+  "ru-chisto.md": {
+    "lang": "ru",
+    "findings": {}
+  },
+  "en-violations.md": {
+    "lang": "en",
+    "findings": {
+      "Biased or imprecise term": 3,
+      "Possible passive voice (advisory)": 2,
+      "The reader's work called easy": 2,
+      "Formal or long word (use a plain one)": 2,
+      "Hidden verb (nominalization)": 2,
+      "Exclamation mark, \"let's\", or shorthand": 1,
+      "Paragraph opens with a connector": 1,
+      "Latin abbreviation instead of words": 1,
+      "All-digit date reads two ways": 1,
+      "Slash instead of a word": 1,
+      "Empty opener instead of the action": 1,
+      "Long number not grouped": 1,
+      "Sign instead of a word": 1,
+      "Full stops inside an abbreviation": 1,
+      "Range written with a hyphen": 1,
+      "Numbered list with a single item": 1
+    }
+  },
+  "en-clean.md": {
+    "lang": "en",
+    "findings": {}
+  }
+}

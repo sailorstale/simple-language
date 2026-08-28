@@ -70,6 +70,8 @@ cp hooks/write-simply-en.sh ~/.claude/hooks/ && chmod +x ~/.claude/hooks/write-s
 
 3. **Connect the hook** in `~/.claude/settings.json`: add the block from [settings-snippet-en.json](settings-snippet-en.json).
 
+4. **Connect the check-on-write hook** if you want findings to arrive on their own. Copy `hooks/check-prose-on-write.sh` into `~/.claude/hooks/`, make it executable, and add the block from [settings-snippet-check.json](settings-snippet-check.json).
+
 > If the file already has a `hooks` section, put the `UserPromptSubmit` entry inside it. Do not add a second `hooks` section.
 
 Then restart your Claude session, so it picks up the new hook and sees the skill.
@@ -105,6 +107,7 @@ The set has three parts, and each does a different job.
 - **The hook** in `hooks/` hands Claude a short digest of the rules on every message, so they do not fade in ordinary chat.
 - **The skill** in `skills/plain-english/` holds the full rulebook and opens for a long piece of text or when you call `/plain-english`.
 - **The checker** in `skills/plain-english/scripts/` reads a finished file and points at the places where the rules break.
+- **A second hook** in `hooks/` runs that check on its own as soon as Claude writes a document, and hands the findings back.
 
 The three parts cover different gaps. The hook always arrives, but it carries only nine main points. The skill explains in depth, yet Claude opens it rarely. And the checker catches what slipped through anyway, because a writer cannot see their own mistakes.
 
@@ -169,6 +172,16 @@ rm ~/.claude/hooks/write-simply-en.sh
 ```
 
 Then open `~/.claude/settings.json` and delete the `UserPromptSubmit` entry that points at `write-simply-en.sh`. Restart your Claude session.
+
+## If you edit the rules
+
+The `tests` folder holds sample files with known violations and the list of findings to expect. One command runs both checkers over them and reports whether the result still matches:
+
+```bash
+node tests/run.mjs
+```
+
+Run it after any edit to the search patterns. Patterns break quietly: you fix one rule and a neighbouring one stops firing. When a finding changes on purpose, update `tests/expected.json`.
 
 ## Licence
 

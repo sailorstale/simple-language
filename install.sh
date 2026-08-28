@@ -44,6 +44,51 @@ case "$LANG" in
   *) echo "Непонятный выбор. / Unknown choice."; exit 1 ;;
 esac
 
+echo
+echo "Проверять текст сразу после записи документа? / Check prose right after a document is written?"
+echo "  1) Да / yes   2) Нет / no"
+printf "[1/2]: "
+read -r CHECK
+if [ "$CHECK" = "1" ]; then
+  mkdir -p "$HOOKS"
+  cp "$REPO/hooks/check-prose-on-write.sh" "$HOOKS/"
+  chmod +x "$HOOKS/check-prose-on-write.sh"
+  echo "  хук проверки / check hook: check-prose-on-write.sh -> $HOOKS/"
+  if command -v python3 >/dev/null 2>&1; then
+    python3 - "$SETTINGS" <<'PYCHECK'
+import json, os, sys
+settings = sys.argv[1]
+cmd = "$HOME/.claude/hooks/check-prose-on-write.sh"
+data = {}
+if os.path.exists(settings):
+    try:
+        with open(settings, encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        print("  settings.json не читается как JSON — добавь запись из settings-snippet-check.json вручную")
+        print("  settings.json is not valid JSON — add the settings-snippet-check.json entry by hand")
+        sys.exit(0)
+post = data.setdefault("hooks", {}).setdefault("PostToolUse", [])
+wired = any(
+    any(h.get("command", "").endswith("/check-prose-on-write.sh") for h in e.get("hooks", []))
+    for e in post if isinstance(e, dict)
+)
+if wired:
+    print("  хук проверки уже подключён / check hook already wired")
+else:
+    post.append({"matcher": "Write|Edit|MultiEdit",
+                 "hooks": [{"type": "command", "command": cmd, "timeout": 30}]})
+    os.makedirs(os.path.dirname(settings), exist_ok=True)
+    with open(settings, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    print("  хук проверки подключён в settings.json / check hook wired into settings.json")
+PYCHECK
+  else
+    echo "  python3 не найден — добавь запись из settings-snippet-check.json вручную"
+    echo "  python3 not found — add the entry from settings-snippet-check.json by hand"
+  fi
+fi
+
 if [ -n "$HOOK" ]; then
   mkdir -p "$HOOKS"
   cp "$REPO/hooks/$HOOK" "$HOOKS/"

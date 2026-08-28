@@ -32,7 +32,7 @@ const rulesPath = existsSync(join(SCRIPT_DIR, 'prose-rules.json'))
   : join(BASE, '.claude/scripts/prose-rules.json')
 const rules = JSON.parse(readFileSync(rulesPath, 'utf8'))
 
-const SKIP_DIRS = new Set(['.git', '.claude', 'node_modules'])
+const SKIP_DIRS = new Set(['.git', '.claude', 'node_modules', 'tests'])
 
 function collect(dir, out = []) {
   let entries

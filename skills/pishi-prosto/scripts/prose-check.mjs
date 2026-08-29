@@ -302,7 +302,8 @@ function checkConjunctions(file, { n, text, raw }) {
   if (raw.trim().startsWith('|') || raw.trim().startsWith('#')) return
   for (const s of text.split(/(?<=[.!?…])\s+/)) {
     let c = 0
-    const re = /\s(и|или|но)\s/gi
+    // «и так» и «и то» — обороты в значении «без того», а не сочинительные союзы.
+    const re = /\s(и|или|но)\s(?!(?:так|то)(?:[^А-Яа-яёЁ]|$))/gi
     let m
     while ((m = re.exec(s))) {
       const rest = s.slice(m.index + m[0].length).split(/[,;:—]|\s(?:и|или|но)\s/)[0]

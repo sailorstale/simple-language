@@ -524,18 +524,21 @@ function checkLinkQuality(file) {
   }
   const seen = new Map()
   raws.forEach((raw, i) => {
+    // Пункт-ссылка целиком — строка оглавления: там подпись повторяет название
+    // раздела и длинной бывает по делу.
+    const tocLine = /^\s*(?:[-*]|\d+[.)])\s*\[[^\]]+\]\([^)]*\)\s*$/.test(raw)
     const re = /(^|[^!])\[([^\]]+)\]\(([^)]*)\)/g
     let m
     while ((m = re.exec(raw))) {
       const label = m[2].trim()
       const target = m[3].trim()
-      const words = label.split(/\s+/).filter(Boolean).length
+      const words = tocLine ? 0 : label.split(/\s+/).filter(Boolean).length
       if (words > 8)
-        add(file, i + 1, 'ссылка-текст', true, label, `текст ссылки из ${words} слов — оставь около четырёх, чтобы он читался с первого взгляда`)
+        add(file, i + 1, 'ссылка-длина', true, label, `текст ссылки из ${words} слов — оставь около четырёх, чтобы он читался с первого взгляда`)
       const key = label.toLowerCase()
       const before = seen.get(key)
       if (before && before !== target)
-        add(file, i + 1, 'ссылка-текст', true, label, 'одинаковый текст ведёт на разные страницы — читатель примет их за одну')
+        add(file, i + 1, 'ссылка-длина', true, label, 'одинаковый текст ведёт на разные страницы — читатель примет их за одну')
       else if (!before) seen.set(key, target)
     }
   })
@@ -595,6 +598,7 @@ const NAMES = {
   жаргон: 'Жаргон без пояснения',
   связка: 'Запрещённая связка «не X, а Y»',
   'ссылка-текст': 'Пустой текст ссылки («здесь», «тут»)',
+  'ссылка-длина': 'Текст ссылки слишком длинный или повторяется',
   обрубок: 'Обрубленная фраза без глагола',
   длинно: 'Слишком длинное предложение',
   проценты: 'Проценты вместо долей',

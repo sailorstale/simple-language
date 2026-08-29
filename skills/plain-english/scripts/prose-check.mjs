@@ -463,18 +463,21 @@ function checkLinkQuality(file) {
   }
   const seen = new Map()
   raws.forEach((raw, i) => {
+    // A bullet that is nothing but a link is a table-of-contents line, where the
+    // label repeats a section title and is long for a reason.
+    const tocLine = /^\s*(?:[-*]|\d+[.)])\s*\[[^\]]+\]\([^)]*\)\s*$/.test(raw)
     const re = /(^|[^!])\[([^\]]+)\]\(([^)]*)\)/g
     let m
     while ((m = re.exec(raw))) {
       const label = m[2].trim()
       const target = m[3].trim()
-      const words = label.split(/\s+/).filter(Boolean).length
+      const words = tocLine ? 0 : label.split(/\s+/).filter(Boolean).length
       if (words > 8)
-        add(file, i + 1, 'link', true, label, `link text of ${words} words — keep it to about four so it reads at a glance`)
+        add(file, i + 1, 'link-quality', true, label, `link text of ${words} words — keep it to about four so it reads at a glance`)
       const key = label.toLowerCase()
       const before = seen.get(key)
       if (before && before !== target)
-        add(file, i + 1, 'link', true, label, 'the same link text points at two different pages — a reader takes them for one')
+        add(file, i + 1, 'link-quality', true, label, 'the same link text points at two different pages — a reader takes them for one')
       else if (!before) seen.set(key, target)
     }
   })
@@ -534,6 +537,7 @@ const NAMES = {
   formal: 'Formal or long word (use a plain one)',
   hidden: 'Hidden verb (nominalization)',
   link: 'Empty link text ("here", "click here")',
+  'link-quality': 'Link text too long or repeated',
   long: 'Sentence over 25 words',
   caps: 'ALL-CAPS run',
   passive: 'Possible passive voice (advisory)',

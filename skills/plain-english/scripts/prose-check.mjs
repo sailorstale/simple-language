@@ -262,8 +262,16 @@ function checkSpecialChars(file, { n, text, raw }) {
   // Inside quotation marks the sign can be part of a name, so leave it alone.
   const outside = text.replace(/"[^"]*"/g, '""').replace(/«[^»]*»/g, '«»')
     .replace(/\*\*[^*]*\*\*/g, '**')
-  const m = outside.match(/\s([&+~])\s/)
-  if (m) add(file, n, 'sign', true, text, `replace "${m[1]}" with a word: "and", "plus", "about"`)
+  // A screen reader always skips "&", so that one is strict. "+" and "~" read
+  // fine in working notes, so they are advisory.
+  const amp = outside.match(/\s(&)\s/)
+  if (amp) {
+    add(file, n, 'sign', true, text, 'replace "&" with the word "and": a screen reader skips the sign')
+    return
+  }
+  if (!SHOW_ALL) return
+  const other = outside.match(/\s([+~])\s/)
+  if (other) add(file, n, 'sign', false, text, `replace "${other[1]}" with a word in prose: "plus", "about"`)
 }
 
 // GOV.UK: no full stops inside an abbreviation.

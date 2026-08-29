@@ -328,8 +328,16 @@ function checkSpecialChars(file, { n, text, raw }) {
   if (raw.trim().startsWith('|') || foreignLine(text)) return
   const outside = text.replace(/«[^»]*»/g, '«»').replace(/"[^"]*"/g, '""')
     .replace(/\*\*[^*]*\*\*/g, '**')
-  const m = outside.match(/\s([&+~])\s/)
-  if (m) add(file, n, 'знак', true, text, `знак «${m[1]}» замени словом: «и», «плюс», «около»`)
+  // Программа чтения вслух пропускает «&» всегда, поэтому он строгая находка.
+  // Знаки «+» и «~» в рабочей записи читаются нормально, и это подозрение.
+  const amp = outside.match(/\s(&)\s/)
+  if (amp) {
+    add(file, n, 'знак', true, text, 'знак «&» замени словом «и»: программа чтения вслух его пропускает')
+    return
+  }
+  if (!SHOW_ALL) return
+  const other = outside.match(/\s([+~])\s/)
+  if (other) add(file, n, 'знак', false, text, `знак «${other[1]}» в связном тексте замени словом: «плюс», «около»`)
 }
 
 // GOV.UK: точки внутри сокращения не ставят.

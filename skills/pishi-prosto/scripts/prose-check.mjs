@@ -555,6 +555,16 @@ function checkLinkQuality(file) {
   })
 }
 
+// Свод, «Как чинить тяжёлую фразу», правило 1: у глагола отобрали работу и
+// превратили его в существительное — «осуществляется перенос» вместо «переносим».
+function checkOfficialese(file, { n, text, raw }) {
+  if (raw.trim().startsWith('#')) return
+  // По границам слова: «появляется» содержит «является», и подстрока ловила бы его.
+  for (const [w, hint] of Object.entries(rules['канцелярит'] || {})) {
+    if (wordRe(w).test(text)) add(file, n, 'канцелярит', true, text, `«${w}» — ${hint}`)
+  }
+}
+
 // ── Прогон ──────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -583,6 +593,7 @@ for (const file of files) {
     checkAds(file, line)
     checkIntensifiers(file, line)
     checkTimeFillers(file, line)
+    checkOfficialese(file, line)
     checkLatin(file, line)
     checkSlash(file, line)
     checkDate(file, line)
@@ -634,6 +645,7 @@ const NAMES = {
   'реклама': 'Оценка без факта (проверь глазами)',
   'усилитель': 'Усилитель без факта',
   'оборот-времени': 'Оборот про «сейчас», который не нужен',
+  'канцелярит': 'У глагола отобрали работу',
 }
 
 const byFile = new Map()

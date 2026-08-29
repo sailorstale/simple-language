@@ -216,6 +216,14 @@ function checkList(file, { n, text, raw }) {
     add(file, n, 'список', true, body, 'пункт не помещается в одно предложение — это был абзац')
 }
 
+// Строка на чужом языке: английская цитата, название пункта меню, кусок интерфейса.
+// Такие строки живут по своим нормам, и русские правила к ним не применяются.
+function foreignLine(text) {
+  const cyr = (text.match(/[А-Яа-яёЁ]/g) || []).length
+  const lat = (text.match(/[A-Za-z]/g) || []).length
+  return lat > cyr * 2
+}
+
 // Google, tone: работу читателя не называют лёгкой — если не вышло, слово «просто» винит его.
 function checkEasy(file, { n, text }) {
   for (const w of rules['лёгкость'] || []) {
@@ -299,8 +307,9 @@ function checkParagraphStart(file, { n, raw }, prevBlank) {
 // Microsoft, writing for all abilities: программа чтения такие знаки пропускает или читает неверно.
 // Внутри кавычек знак бывает частью названия («право + область»), и там его не трогаем.
 function checkSpecialChars(file, { n, text, raw }) {
-  if (raw.trim().startsWith('|')) return
+  if (raw.trim().startsWith('|') || foreignLine(text)) return
   const outside = text.replace(/«[^»]*»/g, '«»').replace(/"[^"]*"/g, '""')
+    .replace(/\*\*[^*]*\*\*/g, '**')
   const m = outside.match(/\s([&+~])\s/)
   if (m) add(file, n, 'знак', true, text, `знак «${m[1]}» замени словом: «и», «плюс», «около»`)
 }

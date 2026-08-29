@@ -435,6 +435,10 @@ for (const [file, list] of [...byFile.entries()].sort((a, b) => b[1].length - a[
   }
   for (const [rule, items] of byRule) {
     console.log(`\n  ${NAMES[rule] || rule} — ${items.length}`)
+    if (!items[0].strict && !SHOW_ALL) {
+      console.log('    (advisory — run with --all to see the places)')
+      continue
+    }
     for (const f of items.slice(0, 12)) {
       console.log(`    line ${f.n}: ${f.fragment}`)
       console.log(`      -> ${f.hint}`)

@@ -19,7 +19,7 @@ Two flags change what happens:
 
 ## What it catches
 
-Strict findings point at something the rules name outright. Advisory findings are guesses that need your eye.
+Strict findings point at something the rules name outright. Advisory findings are guesses that need your eye: the report counts them but hides the places until you pass `--all`.
 
 | What it flags | Kind |
 |---|---|

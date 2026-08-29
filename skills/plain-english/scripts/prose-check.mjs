@@ -308,6 +308,17 @@ function checkSingleStepList(file, lines) {
   flush()
 }
 
+// Is this an English document? Count letters: a Russian file is mostly Cyrillic.
+function isEnglish(lines) {
+  let cyr = 0
+  let lat = 0
+  for (const { text } of lines) {
+    cyr += (text.match(/[А-Яа-яёЁ]/g) || []).length
+    lat += (text.match(/[A-Za-z]/g) || []).length
+  }
+  return lat >= cyr
+}
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -319,6 +330,9 @@ for (const file of files) {
     continue
   }
   const lines = readLines(file)
+  // Sweeping the whole project, skip a file in another language: Russian prose
+  // follows its own norms, and this check would only raise false alarms there.
+  if (!paths.length && !isEnglish(lines)) continue
   let prevBlank = true
   for (const line of lines) {
     checkFormal(file, line)

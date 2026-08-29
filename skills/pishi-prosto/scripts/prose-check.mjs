@@ -341,6 +341,17 @@ function checkSingleStepList(file, lines) {
   flush()
 }
 
+// Русский ли это документ. Считаем буквы: у английского файла кириллицы почти нет.
+function isRussian(lines) {
+  let cyr = 0
+  let lat = 0
+  for (const { text } of lines) {
+    cyr += (text.match(/[А-Яа-яёЁ]/g) || []).length
+    lat += (text.match(/[A-Za-z]/g) || []).length
+  }
+  return cyr >= lat
+}
+
 // ── Прогон ──────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -352,6 +363,9 @@ for (const file of files) {
     continue
   }
   const lines = readLines(file)
+  // При обходе всего проекта чужой язык пропускаем: английский текст живёт
+  // по своим нормам, и русская проверка нашла бы в нём только ложные тревоги.
+  if (!paths.length && !isRussian(lines)) continue
   let prevBlank = true
   for (const line of lines) {
     checkWords(file, line)

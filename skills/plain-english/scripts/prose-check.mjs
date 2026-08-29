@@ -170,7 +170,11 @@ function checkHype(file, { n, text }) {
 // Google, tone: never call the reader's work easy — if it fails, the word blames them.
 function checkEasy(file, { n, text }) {
   for (const w of rules['easy'] || []) {
-    if (phraseRe(w).test(text)) add(file, n, 'easy', true, text, `"${w}" states no fact — say how many steps or how long it takes`)
+    if (!phraseRe(w).test(text)) continue
+    // After a negation the word means "merely", not "with little effort":
+    // "a user does not simply have a role" says nothing about the reader's work.
+    if (/\b(not|never|cannot|n't)\s+(\w+\s+){0,2}simply\b/i.test(text)) continue
+    add(file, n, 'easy', true, text, `"${w}" states no fact — say how many steps or how long it takes`)
   }
 }
 

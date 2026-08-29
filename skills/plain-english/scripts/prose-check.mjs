@@ -232,10 +232,13 @@ function checkDate(file, { n, text }) {
 // Microsoft top-10 tips: an empty opener eats the most visible slot in the line.
 function checkEmptyOpener(file, { n, text, raw }) {
   if (raw.trim().startsWith('#')) return
+  // The rule is about an opener, so the phrase has to start a sentence: "there is"
+  // inside a clause ("before there is a second club") is ordinary English.
   for (const [w, hint] of Object.entries(rules['empty-openers'] || {})) {
     if (!phraseRe(w).test(text)) continue
-    // "there is no X" states that something does not exist; no shorter form exists.
     if (/\bthere (is|are) (no|nothing|nobody)\b/i.test(text)) continue
+    const opens = new RegExp(`(^|[.!?]\\s+|^\\s*[-*>]\\s*|\\*\\*\\s*)${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i')
+    if (!opens.test(text.trim())) continue
     add(file, n, 'opener', true, text, `"${w}" — ${hint}`)
   }
 }

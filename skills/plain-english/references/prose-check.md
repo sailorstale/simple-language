@@ -43,10 +43,12 @@ Strict findings point at something the rules name outright. Advisory findings ar
 | Full stops inside an abbreviation | strict |
 | A long unbroken run of digits | strict |
 | A range written with a hyphen | strict |
+| An intensifier such as `very` or `really` | strict |
+| A paragraph longer than five sentences | strict |
+| A paragraph opening with a connector | strict |
+| Link text longer than eight words, or the same text on two destinations | strict |
 | A list holding a single item, bulleted or numbered | strict |
 | Two headings in a row, a skipped level, a period at the end, or a second top-level heading | strict |
-| A paragraph longer than five sentences | strict |
-| An intensifier such as `very` or `really` | strict |
 | A double negative in one sentence | advisory, needs `--all` |
 | An idiom or cultural reference | advisory, needs `--all` |
 

@@ -79,5 +79,36 @@
       "Список, который был абзацем": 1,
       "Нумерованный список из одного пункта": 1
     }
+  },
+  "en-all-rules.md": {
+    "lang": "en",
+    "flags": [
+      "--all"
+    ],
+    "findings": {
+      "Subjective / hype adjective (advisory)": 3,
+      "Biased or imprecise term": 3,
+      "Formal or long word (use a plain one)": 2,
+      "Empty link text (\"here\", \"click here\")": 2,
+      "Possible passive voice (advisory)": 2,
+      "The reader's work called easy": 2,
+      "Exclamation mark, \"let's\", or shorthand": 2,
+      "Idiom or cultural reference (advisory)": 2,
+      "Hidden verb (nominalization)": 1,
+      "Sentence over 25 words": 1,
+      "Three or more conjunctions in a sentence": 1,
+      "Slash instead of a word": 1,
+      "Latin abbreviation instead of words": 1,
+      "All-digit date reads two ways": 1,
+      "Empty opener instead of the action": 1,
+      "Paragraph opens with a connector": 1,
+      "Sign instead of a word": 1,
+      "Full stops inside an abbreviation": 1,
+      "Long number not grouped": 1,
+      "Range written with a hyphen": 1,
+      "Double negative (advisory)": 1,
+      "ALL-CAPS run": 1,
+      "Numbered list with a single item": 1
+    }
   }
 }

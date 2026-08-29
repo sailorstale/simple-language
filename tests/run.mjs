@@ -69,7 +69,37 @@ function checkHook() {
   return true
 }
 
-let failed = checkHook() ? 0 : 1
+// Хук напоминания: первый ход даёт полный свод, дальше короткое напоминание,
+// а служебные сообщения не получают ничего.
+function checkReminder() {
+  const dir = join(ROOT, 'hooks', 'write-simply-reminder.sh')
+  const session = `test-${process.pid}`
+  const call = (prompt) => {
+    const out = execFileSync('bash', [dir], {
+      input: JSON.stringify({ session_id: session, prompt }),
+      encoding: 'utf8',
+    }).trim()
+    return out ? JSON.parse(out).hookSpecificOutput.additionalContext.length : 0
+  }
+  const first = call('напиши документ')
+  const second = call('поправь второй раздел')
+  const service = call('да')
+  const problems = []
+  if (first < 1000) problems.push(`первый ход дал ${first} знаков вместо полного свода`)
+  if (second < 200 || second > 600) problems.push(`второй ход дал ${second} знаков вместо короткого напоминания`)
+  if (service !== 0) problems.push(`служебное сообщение получило ${service} знаков вместо тишины`)
+  if (problems.length) {
+    console.log('✗ хук напоминания')
+    for (const p of problems) console.log(`    ${p}`)
+    return false
+  }
+  console.log(`✓ хук напоминания — полный свод ${first}, короткое ${second}, служебное молчит`)
+  return true
+}
+
+let failed = 0
+if (!checkHook()) failed++
+if (!checkReminder()) failed++
 for (const [file, spec] of Object.entries(expected)) {
   const out = run(spec.lang, file, spec.flags || [])
   const got = summary(out)

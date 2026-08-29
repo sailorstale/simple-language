@@ -280,6 +280,17 @@ function checkEmptyStart(file, { n, text, raw }) {
 // Microsoft global communications: больше двух ЧАСТЕЙ через «и», «или», «но» читаются тяжело.
 // Считаем только те союзы, после которых идёт своё сказуемое: «сверили и нашли, и поправили»
 // тяжело, а перечисление «клуб, категория или команда» — обычный однородный ряд.
+// Узкий признак сказуемого. Общая эвристика hasVerb для этого правила широка:
+// она принимает за глаголы «плоским» и «чуть», и тогда однородный ряд выглядит
+// цепочкой частей. Здесь берём только явные глагольные окончания и длину от пяти букв.
+const PREDICATE = /(ться|ется|ются|ают|яют|ает|ляет|ешь|ишь|или|ели|али|яли|ыли|ился|илась|лись|лся|ает|ают|ит|ят|ат|ут|ют|ть|л|ла|ло|ли)$/i
+const hasPredicate = (s) =>
+  s.split(/[\s,;:()«»"]+/).filter(Boolean).some((w) => {
+    const low = w.toLowerCase()
+    if (low.length < 5 || NOT_VERBS.has(low)) return false
+    return PREDICATE.test(low) || ORDERS.has(low)
+  })
+
 function checkConjunctions(file, { n, text, raw }) {
   if (raw.trim().startsWith('|') || raw.trim().startsWith('#')) return
   for (const s of text.split(/(?<=[.!?…])\s+/)) {
@@ -288,7 +299,7 @@ function checkConjunctions(file, { n, text, raw }) {
     let m
     while ((m = re.exec(s))) {
       const rest = s.slice(m.index + m[0].length).split(/[,;:—]|\s(?:и|или|но)\s/)[0]
-      if (hasVerb(rest)) c++
+      if (hasPredicate(rest)) c++
     }
     if (c >= 3) add(file, n, 'союзы', true, s, `${c} части сцеплены союзами — третью вынеси отдельным предложением`)
   }

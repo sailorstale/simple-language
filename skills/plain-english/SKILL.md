@@ -141,6 +141,12 @@ Each one is short, checkable, and drawn from the guides listed at the end of thi
 - **Keep exclamation marks, `let's`, and internet shorthand out**, because the reader acts alone and pressure is not a fact.
 - **A single step is not a numbered list**, because numbering carries a sequence.
 - **Fold a double negative into one positive statement**, because readers get two negatives wrong about half the time.
+- **Cut intensifiers such as `very` and `really`**, because they strengthen an opinion and add no checkable fact.
+- **Keep a paragraph to five sentences or fewer**, past which it reads as a wall and the reader skips it.
+- **A list of one item does not exist**, bulleted or numbered.
+- **Put a line of text under every heading** before the next one, and keep levels in order.
+- **End a heading without a period**, and keep one top-level heading per file.
+- **Keep link text short**, about four words, and never give two destinations the same wording.
 
 These rules come from five guides. They are:
 

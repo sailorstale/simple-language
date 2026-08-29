@@ -143,7 +143,7 @@ The set exists for what Claude writes, but the checker does not care who wrote t
 
 ## How many rules there are
 
-Thirty-four rules cover language and ten sections cover formatting. Here are five of the formatting rules.
+Thirty-nine rules cover language and ten sections cover formatting. Here are five of the formatting rules.
 
 - **A paragraph runs three to seven lines**, and a new topic or step starts a new paragraph.
 - **A list item fits in one sentence**, and if it runs longer it was a paragraph, so the detail moves into nested sub-items.

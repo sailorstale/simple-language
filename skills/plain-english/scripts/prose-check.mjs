@@ -210,9 +210,16 @@ function checkIdioms(file, { n, text }) {
 
 // Federal PL Guidelines: a slash pushes the choice of meaning onto the reader.
 function checkSlash(file, { n, text }) {
-  const m = text.match(/\band\/or\b/i) ||
-    text.match(/(^|[^\w/.-])[A-Za-z]{3,}\/[A-Za-z]{3,}(?![\w/.-])/)
-  if (m) add(file, n, 'slash', true, m[0], 'write it out: "or", "and", or "X, Y, or both"')
+  const both = text.match(/\band\/or\b/i)
+  if (both) {
+    add(file, n, 'slash', true, both[0], 'write it out: "or", "and", or "X, Y, or both"')
+    return
+  }
+  // A slash between two words is often a fixed pair the field already uses
+  // (`home/away`, `Mon/Wed`), so it is a hint rather than a breach.
+  if (!SHOW_ALL) return
+  const pair = text.match(/(^|[^\w/.-])[A-Za-z]{3,}\/[A-Za-z]{3,}(?![\w/.-])/)
+  if (pair) add(file, n, 'slash', false, pair[0], 'a slash asks the reader to pick the meaning — write the words out if this is prose')
 }
 
 // Google, dates and times: 12/02/2027 reads as two different days.

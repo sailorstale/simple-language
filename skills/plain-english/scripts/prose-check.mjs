@@ -354,7 +354,10 @@ function isEnglish(lines) {
 function checkIntensifiers(file, { n, text, raw }) {
   if (raw.trim().startsWith('#')) return
   for (const w of rules['intensifiers'] || []) {
-    if (phraseRe(w).test(text)) add(file, n, 'intensifier', true, text, `"${w}" adds no fact — put a number, an action, or a comparison there`)
+    if (!phraseRe(w).test(text)) continue
+    // "really a paragraph" and "really was" mean "in fact", not "to a high degree".
+    if (/\breally\s+(a|an|the|was|were|is|are|do|does|did)\b/i.test(text)) continue
+    add(file, n, 'intensifier', true, text, `"${w}" adds no fact — put a number, an action, or a comparison there`)
   }
 }
 

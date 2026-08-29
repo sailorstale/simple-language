@@ -404,6 +404,24 @@ function isRussian(lines) {
   return cyr >= lat
 }
 
+// Свод, «Как чинить тяжёлую фразу», правило 4: усилитель усиливает оценку и не
+// добавляет ни одного проверяемого факта.
+function checkIntensifiers(file, { n, text, raw }) {
+  if (raw.trim().startsWith('#')) return
+  for (const w of rules['усилители'] || []) {
+    if (wordRe(w).test(text)) add(file, n, 'усилитель', true, text, `«${w}» не добавляет факта — поставь число, действие или сравнение`)
+  }
+}
+
+// Свод, правило 6: любой текст по умолчанию описывает то, что происходит сейчас.
+function checkTimeFillers(file, { n, text, raw }) {
+  if (raw.trim().startsWith('#')) return
+  const low = text.toLowerCase()
+  for (const [w, hint] of Object.entries(rules['обороты-времени'] || {})) {
+    if (low.includes(w)) add(file, n, 'оборот-времени', true, text, `«${w}» — ${hint}`)
+  }
+}
+
 // ── Прогон ──────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -430,6 +448,8 @@ for (const file of files) {
     checkEasy(file, line)
     checkLoaded(file, line)
     checkAds(file, line)
+    checkIntensifiers(file, line)
+    checkTimeFillers(file, line)
     checkLatin(file, line)
     checkSlash(file, line)
     checkDate(file, line)
@@ -471,6 +491,8 @@ const NAMES = {
   'отрицание': 'Двойное отрицание (проверь глазами)',
   'один-пункт': 'Нумерованный список из одного пункта',
   'реклама': 'Оценка без факта (проверь глазами)',
+  'усилитель': 'Усилитель без факта',
+  'оборот-времени': 'Оборот про «сейчас», который не нужен',
 }
 
 const byFile = new Map()

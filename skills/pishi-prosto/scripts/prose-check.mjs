@@ -491,6 +491,28 @@ function checkHeadings(file) {
   }
 }
 
+// Свод 6б: абзац держится в двух-четырёх предложениях, а дальше начинается стена.
+// Считаем по сырым строкам: в markdown абзац — это строка между пустыми.
+function checkParagraphLength(file) {
+  let raws
+  try {
+    raws = readFileSync(join(ROOT, file), 'utf8').split('\n')
+  } catch {
+    return
+  }
+  let inCode = false
+  for (let i = 0; i < raws.length; i++) {
+    const raw = raws[i]
+    if (raw.trim().startsWith('```')) { inCode = !inCode; continue }
+    if (inCode) continue
+    const t = raw.trim()
+    if (!t || /^[#>|\-*\d]/.test(t) || /[🚫✅❌]/.test(t)) continue
+    const sentences = clean(t).split(/(?<=[.!?…])\s+/).filter((s) => s.trim().length > 3)
+    if (sentences.length > 5)
+      add(file, i + 1, 'абзац', true, t, `${sentences.length} предложений в абзаце — раздели на два-три коротких`)
+  }
+}
+
 // ── Прогон ──────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -534,6 +556,7 @@ for (const file of files) {
   checkSingleStepList(file, lines)
   checkSingleBullet(file, lines)
   checkHeadings(file)
+  checkParagraphLength(file)
 }
 
 // ── Отчёт ───────────────────────────────────────────────────────────────────
@@ -563,6 +586,7 @@ const NAMES = {
   'один-пункт': 'Нумерованный список из одного пункта',
   'один-маркер': 'Список из одного пункта',
   'заголовки': 'Ошибка в устройстве заголовков',
+  'абзац': 'Слишком длинный абзац',
   'реклама': 'Оценка без факта (проверь глазами)',
   'усилитель': 'Усилитель без факта',
   'оборот-времени': 'Оборот про «сейчас», который не нужен',

@@ -430,6 +430,28 @@ function checkHeadings(file) {
   }
 }
 
+// Formatting: a paragraph runs three to seven lines (Microsoft); past that it is a wall.
+// Counted on raw lines, since a Markdown paragraph is one line between blanks.
+function checkParagraphLength(file) {
+  let raws
+  try {
+    raws = readFileSync(join(ROOT, file), 'utf8').split('\n')
+  } catch {
+    return
+  }
+  let inCode = false
+  for (let i = 0; i < raws.length; i++) {
+    const raw = raws[i]
+    if (raw.trim().startsWith('```')) { inCode = !inCode; continue }
+    if (inCode) continue
+    const t = raw.trim()
+    if (!t || /^[#>|\-*\d]/.test(t) || /[🚫✅❌]/.test(t)) continue
+    const sentences = clean(t).split(/(?<=[.!?])\s+(?=[A-Z"'(`*])/).filter((s) => s.trim().length > 3)
+    if (sentences.length > 5)
+      add(file, i + 1, 'paragraph', true, t, `${sentences.length} sentences in one paragraph — split it into two or three`)
+  }
+}
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -474,6 +496,7 @@ for (const file of files) {
   checkSingleStepList(file, lines)
   checkSingleBullet(file, lines)
   checkHeadings(file)
+  checkParagraphLength(file)
 }
 
 // ── Report ───────────────────────────────────────────────────────────────────
@@ -503,6 +526,7 @@ const NAMES = {
   'one-step': 'Numbered list with a single item',
   'one-bullet': 'List with a single item',
   headings: 'Heading structure mistake',
+  paragraph: 'Paragraph too long',
   idiom: 'Idiom or cultural reference (advisory)',
   intensifier: 'Intensifier with no fact',
 }

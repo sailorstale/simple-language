@@ -19,8 +19,13 @@ read -r LANG
 
 install_skill() {
   mkdir -p "$SKILLS"
-  cp -R "$REPO/skills/$1" "$SKILLS/"
-  echo "  скил / skill: $1 -> $SKILLS/"
+  if [ -d "$SKILLS/$1" ]; then
+    cp -R "$REPO/skills/$1" "$SKILLS/"
+    echo "  скил обновлён / skill updated: $1"
+  else
+    cp -R "$REPO/skills/$1" "$SKILLS/"
+    echo "  скил поставлен / skill installed: $1"
+  fi
 }
 
 HOOK=""

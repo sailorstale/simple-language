@@ -164,14 +164,13 @@ The Russian set follows its own sources and does not mirror this one rule for ru
 
 ## How to remove it
 
-Two commands clear out the files:
+One command clears the skills, the hooks, and the settings entries:
 
 ```bash
-rm -rf ~/.claude/skills/plain-english
-rm ~/.claude/hooks/write-simply-en.sh
+cd simple-language && ./uninstall.sh
 ```
 
-Then open `~/.claude/settings.json` and delete the `UserPromptSubmit` entry that points at `write-simply-en.sh`. Restart your Claude session.
+It saves a copy of the old settings beside them as `settings.json.bak`. Restart your Claude session afterwards.
 
 ## If you edit the rules
 
@@ -180,6 +179,8 @@ The `tests` folder holds sample files with known violations and the list of find
 ```bash
 node tests/run.mjs
 ```
+
+The same check runs on push: `.github/workflows/prose.yml` runs the tests and checks the changed documents inside GitHub.
 
 Run it after any edit to the search patterns. Patterns break quietly: you fix one rule and a neighbouring one stops firing. When a finding changes on purpose, update `tests/expected.json`.
 

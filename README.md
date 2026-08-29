@@ -166,14 +166,13 @@ README.md — находок: 1
 
 ## Как удалить
 
-Три команды, и следа не останется:
+Одна команда убирает скилы, хуки и записи в настройках:
 
 ```bash
-rm -rf ~/.claude/skills/pishi-prosto
-rm ~/.claude/hooks/write-simply-reminder.sh
+cd simple-language && ./uninstall.sh
 ```
 
-Потом открой `~/.claude/settings.json` и убери оттуда запись `UserPromptSubmit`, которая ведёт на `write-simply-reminder.sh`. Перезапусти сессию Claude.
+Копию старых настроек она сохранит рядом под именем `settings.json.bak`. После этого перезапусти сессию Claude.
 
 ## Если правишь правила
 
@@ -182,6 +181,8 @@ rm ~/.claude/hooks/write-simply-reminder.sh
 ```bash
 node tests/run.mjs
 ```
+
+Та же проверка идёт при отправке в облако: файл `.github/workflows/prose.yml` прогоняет тесты и проверяет изменённые документы прямо в GitHub.
 
 Запускай её после любой правки образцов поиска. Образцы легко сломать незаметно: правишь одно правило, а перестаёт срабатывать соседнее. Если находка изменилась намеренно, обнови файл `tests/expected.json`.
 

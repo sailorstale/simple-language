@@ -1,0 +1,40 @@
+name: prose
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Тесты правил / rule tests
+        run: node tests/run.mjs
+
+      - name: Проверка изменённых документов / check changed documents
+        run: |
+          base="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            base=$(git rev-parse HEAD~1 2>/dev/null || git rev-parse HEAD)
+          fi
+          files=$(git diff --name-only --diff-filter=ACM "$base" HEAD -- '*.md' | grep -v '^tests/' || true)
+          if [ -z "$files" ]; then
+            echo "Изменённых документов нет / no changed documents"
+            exit 0
+          fi
+          echo "$files"
+          for f in $files; do
+            case "$(head -c 4000 "$f" | grep -c '[А-Яа-яёЁ]')" in
+              0) node skills/plain-english/scripts/prose-check.mjs "$f" ;;
+              *) node skills/pishi-prosto/scripts/prose-check.mjs "$f" ;;
+            esac
+          done

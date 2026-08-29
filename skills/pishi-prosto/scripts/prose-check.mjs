@@ -83,6 +83,7 @@ function readLines(file) {
   const out = []
   let inCode = false
   let inFront = raw[0]?.trim() === '---'
+  let skipping = false
   for (let i = 0; i < raw.length; i++) {
     const line = raw[i]
     if (inFront) {
@@ -91,6 +92,13 @@ function readLines(file) {
     }
     if (line.trim().startsWith('```')) { inCode = !inCode; continue }
     if (inCode) continue
+    // Пометки для мест, где плохой текст стоит намеренно: цитата, разбор ошибки, пример.
+    // Блок: <!-- пиши-просто: не проверять --> … <!-- пиши-просто: проверять -->
+    if (/<!--\s*(пиши-просто|prose-check)\s*:\s*(не проверять|off)\s*-->/i.test(line)) { skipping = true; continue }
+    if (/<!--\s*(пиши-просто|prose-check)\s*:\s*(проверять|on)\s*-->/i.test(line)) { skipping = false; continue }
+    if (skipping) continue
+    // Одна строка: <!-- пиши-просто: пропустить -->
+    if (/<!--\s*(пиши-просто|prose-check)\s*:\s*(пропустить|skip)\s*-->/i.test(line)) continue
     if (/[🚫✅❌]/.test(line)) continue // строка с намеренным примером «плохо / хорошо»
     out.push({ n: i + 1, text: clean(line), raw: line })
   }
@@ -166,6 +174,7 @@ function checkStubs(file, { n, text, raw }) {
   const t = raw.trim()
   if (t.startsWith('|')) return          // таблицы живут по своим правилам
   if (t.startsWith('>')) return          // цитаты и примеры внутри свода правил
+  if (t.startsWith('#')) return          // заголовок называет тему и глагола не требует
   if (/[🚫✅❌]/.test(t)) return          // строки-примеры «плохо / хорошо»
   const cyr = (text.match(/[А-Яа-яёЁ]/g) || []).length
   const lat = (text.match(/[A-Za-z]/g) || []).length
@@ -173,7 +182,7 @@ function checkStubs(file, { n, text, raw }) {
   // Тире вместо сказуемого: короткое подлежащее, тире, дальше строчная буква.
   // «— это» пропускаем: в русском это нормальная связка, а не пропущенный глагол.
   const dash = text.match(/(^|[.!?]\s|\*\*)([А-ЯЁ][^.!?—|]{2,45})\s+—\s+([а-яё][^.!?]{0,80})/)
-  if (dash && !/^—\s+это\b/.test(dash[0].slice(dash[0].indexOf('—'))) && !hasVerb(dash[3]))
+  if (dash && !/^—\s+это([^А-Яа-яёЁ]|$)/.test(dash[0].slice(dash[0].indexOf('—'))) && !hasVerb(dash[3]))
     add(file, n, 'обрубок', true, dash[0], 'поставь глагол вместо тире: «X это Y» или «X делает Y»')
   // Двоеточие вместо сказуемого в короткой фразе.
   const colon = text.match(/(^|[.!?]\s)([А-ЯЁ][а-яё]{2,20}):\s+([а-яё][^.!?]{0,45})\./)
@@ -209,9 +218,8 @@ function checkList(file, { n, text, raw }) {
 
 // Google, tone: работу читателя не называют лёгкой — если не вышло, слово «просто» винит его.
 function checkEasy(file, { n, text }) {
-  const low = text.toLowerCase()
   for (const w of rules['лёгкость'] || []) {
-    if (low.includes(w)) add(file, n, 'лёгкость', true, text, `«${w}» не сообщает факта — напиши, сколько шагов или сколько времени займёт дело`)
+    if (wordRe(w).test(text)) add(file, n, 'лёгкость', true, text, `«${w}» не сообщает факта — напиши, сколько шагов или сколько времени займёт дело`)
   }
 }
 

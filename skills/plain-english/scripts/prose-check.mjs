@@ -74,6 +74,7 @@ function readLines(file) {
   const out = []
   let inCode = false
   let inFront = raw[0]?.trim() === '---'
+  let skipping = false
   for (let i = 0; i < raw.length; i++) {
     const line = raw[i]
     if (inFront) {
@@ -82,6 +83,13 @@ function readLines(file) {
     }
     if (line.trim().startsWith('```')) { inCode = !inCode; continue }
     if (inCode) continue
+    // Markers for places where poor writing stands on purpose: a quote, an example, a critique.
+    // Block: <!-- prose-check: off --> … <!-- prose-check: on -->
+    if (/<!--\s*(prose-check|plain-english)\s*:\s*off\s*-->/i.test(line)) { skipping = true; continue }
+    if (/<!--\s*(prose-check|plain-english)\s*:\s*on\s*-->/i.test(line)) { skipping = false; continue }
+    if (skipping) continue
+    // One line: <!-- prose-check: skip -->
+    if (/<!--\s*(prose-check|plain-english)\s*:\s*skip\s*-->/i.test(line)) continue
     if (/[🚫✅❌]/.test(line)) continue // intentional "poor / better" example lines
     out.push({ n: i + 1, text: clean(line), raw: line })
   }
@@ -161,9 +169,8 @@ function checkHype(file, { n, text }) {
 
 // Google, tone: never call the reader's work easy — if it fails, the word blames them.
 function checkEasy(file, { n, text }) {
-  const low = text.toLowerCase()
   for (const w of rules['easy'] || []) {
-    if (low.includes(w)) add(file, n, 'easy', true, text, `"${w}" states no fact — say how many steps or how long it takes`)
+    if (phraseRe(w).test(text)) add(file, n, 'easy', true, text, `"${w}" states no fact — say how many steps or how long it takes`)
   }
 }
 

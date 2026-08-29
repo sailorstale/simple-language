@@ -297,9 +297,11 @@ function checkParagraphStart(file, { n, raw }, prevBlank) {
 }
 
 // Microsoft, writing for all abilities: программа чтения такие знаки пропускает или читает неверно.
+// Внутри кавычек знак бывает частью названия («право + область»), и там его не трогаем.
 function checkSpecialChars(file, { n, text, raw }) {
   if (raw.trim().startsWith('|')) return
-  const m = text.match(/\s([&+~])\s/)
+  const outside = text.replace(/«[^»]*»/g, '«»').replace(/"[^"]*"/g, '""')
+  const m = outside.match(/\s([&+~])\s/)
   if (m) add(file, n, 'знак', true, text, `знак «${m[1]}» замени словом: «и», «плюс», «около»`)
 }
 

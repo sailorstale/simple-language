@@ -252,7 +252,9 @@ function checkParagraphStart(file, { n, raw }, prevBlank) {
 // Microsoft, writing for all abilities: a screen reader skips or misreads these signs.
 function checkSpecialChars(file, { n, text, raw }) {
   if (raw.trim().startsWith('|')) return
-  const m = text.match(/\s([&+~])\s/)
+  // Inside quotation marks the sign can be part of a name, so leave it alone.
+  const outside = text.replace(/"[^"]*"/g, '""').replace(/«[^»]*»/g, '«»')
+  const m = outside.match(/\s([&+~])\s/)
   if (m) add(file, n, 'sign', true, text, `replace "${m[1]}" with a word: "and", "plus", "about"`)
 }
 

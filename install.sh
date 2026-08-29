@@ -26,6 +26,8 @@ install_skill() {
     cp -R "$REPO/skills/$1" "$SKILLS/"
     echo "  скил поставлен / skill installed: $1"
   fi
+  # Finder сорит служебными файлами, и они не должны уезжать к человеку.
+  find "$SKILLS/$1" -name ".DS_Store" -delete 2>/dev/null || true
 }
 
 HOOK=""

@@ -293,7 +293,9 @@ function checkLongNumber(file, { n, text, raw }) {
 // GOV.UK: a hyphen in a range reads as a minus sign and a screen reader skips it.
 function checkRange(file, { n, text, raw }) {
   if (raw.trim().startsWith('|') || raw.trim().startsWith('#')) return
-  const m = text.match(/(^|[^\w-])(\d{1,4})\s?[-–]\s?(\d{1,4})(?![\d-])/)
+  // A unit stuck to the number makes it a technical value ("12-14px"), where the
+  // hyphen is the usual notation rather than prose.
+  const m = text.match(/(^|[^\w-])(\d{1,4})\s?[-–]\s?(\d{1,4})(?![\d-])(?!(?:px|em|rem|pt|mm|cm|kg|ms|kb|mb|gb|dp|vh|vw)\b)/i)
   if (m) add(file, n, 'range', true, `${m[2]}-${m[3]}`, `write the range with a word: "${m[2]} to ${m[3]}"`)
 }
 

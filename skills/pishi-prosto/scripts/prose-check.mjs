@@ -213,7 +213,7 @@ function checkList(file, { n, text, raw }) {
     add(file, n, 'список', true, body, 'между пунктами есть связь — это был абзац, собери обратно в текст')
   const sentences = body.split(/(?<=[.!?…])\s+/).filter((s) => s.trim().length > 3)
   if (sentences.length > 1)
-    add(file, n, 'список', true, body, 'пункт не помещается в одно предложение — это был абзац')
+    add(file, n, 'список', true, body, 'собери пункт обратно в абзац или вынеси подробности вложенными подпунктами')
 }
 
 // Строка на чужом языке: английская цитата, название пункта меню, кусок интерфейса.
@@ -430,7 +430,7 @@ function checkSingleBullet(file, lines) {
   let onlyLink = false
   const flush = () => {
     if (count === 1 && start >= 0 && !onlyLink)
-      add(file, start, 'один-маркер', true, 'маркированный список из одного пункта', 'списка из одного пункта не бывает — это абзац')
+      add(file, start, 'один-маркер', true, 'маркированный список из одного пункта', 'сделай из единственного пункта абзац')
     start = -1
     count = 0
     onlyLink = false
@@ -486,9 +486,9 @@ function checkHeadings(file) {
     }
     const level = m[1].length
     if (prevHeading && !sawText)
-      add(file, n, 'заголовки', true, m[2], 'два заголовка подряд без текста между ними — либо подзаголовок лишний, либо они повторяют друг друга')
+      add(file, n, 'заголовки', true, m[2], 'напиши строку текста под верхним заголовком или убери подзаголовок')
     if (prevLevel && level > prevLevel + 1)
-      add(file, n, 'заголовки', true, m[2], `уровень перепрыгнут: после ${'#'.repeat(prevLevel)} идёт ${'#'.repeat(level)}`)
+      add(file, n, 'заголовки', true, m[2], `уровень перепрыгнут: после ${'#'.repeat(prevLevel)} ставь ${'#'.repeat(prevLevel + 1)}`)
     if (level === 1) {
       topLevel++
       if (topLevel > 1)
@@ -549,7 +549,7 @@ function checkLinkQuality(file) {
       const key = label.toLowerCase()
       const before = seen.get(key)
       if (before && before !== target)
-        add(file, i + 1, 'ссылка-длина', true, label, 'одинаковый текст ведёт на разные страницы — читатель примет их за одну')
+        add(file, i + 1, 'ссылка-длина', true, label, 'дай разным целям разный текст ссылки, иначе читатель примет страницы за одну')
       else if (!before) seen.set(key, target)
     }
   })

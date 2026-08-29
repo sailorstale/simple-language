@@ -147,7 +147,7 @@ function checkLong(file, { n, text, raw }) {
 const capsRe = /\b([A-Z][A-Z0-9]{2,}(?:[ \t]+[A-Z][A-Z0-9]{2,}){2,})\b/
 function checkCaps(file, { n, text }) {
   const m = text.match(capsRe)
-  if (m) add(file, n, 'caps', true, m[1], 'a run of ALL-CAPS text reads as shouting and is hard to read')
+  if (m) add(file, n, 'caps', true, m[1], 'write it in ordinary case; capitals read as shouting and slow the reader down')
 }
 
 // Advisory: possible passive voice. Noisy, so shown but never fails --strict.
@@ -201,7 +201,7 @@ function checkChatty(file, { n, text, raw }) {
     if (low.includes(w)) add(file, n, 'chatty', true, text, `"${w.trim()}" — say it plainly; the reader acts alone`)
   }
   if (/!(\s|$)/.test(text) && !/^\s*[-*]?\s*!\[/.test(text))
-    add(file, n, 'chatty', true, text, 'an exclamation mark adds pressure, not a fact')
+    add(file, n, 'chatty', true, text, 'end the sentence with a full stop and let the fact carry the weight')
 }
 
 // GOV.UK, Microsoft global communications: an idiom is lost on a reader in translation.
@@ -369,7 +369,7 @@ function checkSingleBullet(file, lines) {
   let onlyLink = false
   const flush = () => {
     if (count === 1 && start >= 0 && !onlyLink)
-      add(file, start, 'one-bullet', true, 'bulleted list with a single item', 'a list of one item does not exist — make it a paragraph')
+      add(file, start, 'one-bullet', true, 'bulleted list with a single item', 'turn the single item into a paragraph')
     start = -1
     count = 0
     onlyLink = false
@@ -425,9 +425,9 @@ function checkHeadings(file) {
     }
     const level = m[1].length
     if (prevHeading && !sawText)
-      add(file, n, 'headings', true, m[2], 'two headings in a row with no text between them — either the subheading has no job or they repeat each other')
+      add(file, n, 'headings', true, m[2], 'write a line of text under the upper heading, or drop the subheading')
     if (prevLevel && level > prevLevel + 1)
-      add(file, n, 'headings', true, m[2], `heading level skipped: ${'#'.repeat(level)} follows ${'#'.repeat(prevLevel)}`)
+      add(file, n, 'headings', true, m[2], `heading level skipped: put ${'#'.repeat(prevLevel + 1)} after ${'#'.repeat(prevLevel)}`)
     if (level === 1) {
       topLevel++
       if (topLevel > 1)
@@ -488,7 +488,7 @@ function checkLinkQuality(file) {
       const key = label.toLowerCase()
       const before = seen.get(key)
       if (before && before !== target)
-        add(file, i + 1, 'link-quality', true, label, 'the same link text points at two different pages — a reader takes them for one')
+        add(file, i + 1, 'link-quality', true, label, 'give each destination its own wording, or a reader takes the pages for one')
       else if (!before) seen.set(key, target)
     }
   })

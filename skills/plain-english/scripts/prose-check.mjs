@@ -401,7 +401,18 @@ function checkHeadings(file) {
   } catch {
     return
   }
-  const lines = raws.map((raw, i) => ({ n: i + 1, raw }))
+  // Блок кода пропускаем: строка «# комментарий» внутри него заголовком не является.
+  const lines = []
+  let inCode = false
+  let inFront = raws[0]?.trim() === '---'
+  raws.forEach((raw, i) => {
+    if (inFront) {
+      if (i > 0 && raw.trim() === '---') inFront = false
+      return
+    }
+    if (raw.trim().startsWith('```')) { inCode = !inCode; return }
+    if (!inCode) lines.push({ n: i + 1, raw })
+  })
   let prevLevel = 0
   let topLevel = 0
   let prevHeading = null

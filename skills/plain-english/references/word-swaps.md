@@ -20,6 +20,13 @@ Each of these is a near drop-in replacement: the plain word means the same thing
 | `ascertain` | find out |
 | `endeavour` | try |
 | `obtain` | get |
+| `prior to` | before |
+| `subsequent to` | after |
+| `due to the fact that` | because |
+| `in the event that` | if |
+| `for the purpose of` | to |
+| `in attendance` | attending |
+| `take note of` | note |
 | `assist` | help |
 | `demonstrate` | show |
 | `sufficient` | enough |

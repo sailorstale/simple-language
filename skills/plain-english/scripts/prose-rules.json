@@ -37,7 +37,14 @@
     "in the event that": "if",
     "in the majority of cases": "usually",
     "at this time": "now",
-    "at present": "now"
+    "at present": "now",
+    "due to the fact that": "because",
+    "for the purpose of": "to",
+    "in attendance": "attending",
+    "take note of": "note",
+    "would like to request": "ask",
+    "at the present time": "now",
+    "in the near future": "soon, or give the date"
   },
   "hidden-verbs": {
     "conduct an analysis of": "analyse",

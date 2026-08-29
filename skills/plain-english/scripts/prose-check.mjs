@@ -593,8 +593,11 @@ if (!findings.length) {
   process.exit(0)
 }
 
+// Файл вне проекта показываем полным путём: лестница из «../» читается плохо.
+const shownName = (f) => (f.startsWith('..') ? resolve(ROOT, f) : f)
+
 for (const [file, list] of [...byFile.entries()].sort((a, b) => b[1].length - a[1].length)) {
-  console.log(`\n${file} — ${list.length} finding(s)`)
+  console.log(`\n${shownName(file)} — ${list.length} finding(s)`)
   const byRule = new Map()
   for (const f of list) {
     if (!byRule.has(f.rule)) byRule.set(f.rule, [])
@@ -606,11 +609,20 @@ for (const [file, list] of [...byFile.entries()].sort((a, b) => b[1].length - a[
       console.log('    (advisory — run with --all to see the places)')
       continue
     }
-    for (const f of items.slice(0, 12)) {
-      console.log(`    line ${f.n}: ${f.fragment}`)
+    // Several findings on one line share the fragment, so a long piece of text
+    // is not repeated under every hint.
+    let shown = 0
+    let lastLine = null
+    for (const f of items) {
+      if (shown >= 12) break
+      if (f.n !== lastLine) {
+        console.log(`    line ${f.n}: ${f.fragment}`)
+        lastLine = f.n
+      }
       console.log(`      -> ${f.hint}`)
+      shown++
     }
-    if (items.length > 12) console.log(`    …and ${items.length - 12} more`)
+    if (items.length > shown) console.log(`    …and ${items.length - shown} more`)
   }
 }
 

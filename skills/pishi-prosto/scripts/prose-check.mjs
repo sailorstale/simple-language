@@ -667,8 +667,11 @@ if (!findings.length) {
   process.exit(0)
 }
 
+// Файл вне проекта показываем полным путём: лестница из «../» читается плохо.
+const shownName = (f) => (f.startsWith('..') ? resolve(ROOT, f) : f)
+
 for (const [file, list] of [...byFile.entries()].sort((a, b) => b[1].length - a[1].length)) {
-  console.log(`\n${file} — находок: ${list.length}`)
+  console.log(`\n${shownName(file)} — находок: ${list.length}`)
   const byRule = new Map()
   for (const f of list) {
     if (!byRule.has(f.rule)) byRule.set(f.rule, [])
@@ -680,11 +683,20 @@ for (const [file, list] of [...byFile.entries()].sort((a, b) => b[1].length - a[
       console.log('    (подозрение — запусти с флагом --всё, чтобы увидеть места)')
       continue
     }
-    for (const f of items.slice(0, 12)) {
-      console.log(`    строка ${f.n}: ${f.fragment}`)
+    // Несколько находок на одной строке печатаем под одним фрагментом:
+    // иначе длинный кусок текста повторяется у каждой подсказки.
+    let shown = 0
+    let lastLine = null
+    for (const f of items) {
+      if (shown >= 12) break
+      if (f.n !== lastLine) {
+        console.log(`    строка ${f.n}: ${f.fragment}`)
+        lastLine = f.n
+      }
       console.log(`      ↳ ${f.hint}`)
+      shown++
     }
-    if (items.length > 12) console.log(`    …и ещё ${items.length - 12}`)
+    if (items.length > shown) console.log(`    …и ещё ${items.length - shown}`)
   }
 }
 

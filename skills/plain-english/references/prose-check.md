@@ -44,6 +44,7 @@ Strict findings point at something the rules name outright. Advisory findings ar
 | A long unbroken run of digits | strict |
 | A range written with a hyphen | strict |
 | A numbered list holding a single item | strict |
+| An intensifier such as `very` or `really` | strict |
 | A double negative in one sentence | advisory, needs `--all` |
 | An idiom or cultural reference | advisory, needs `--all` |
 

@@ -175,7 +175,7 @@ Fix a heavy sentence by moving parts, not by cutting them. The idea stays whole;
 
 ### 4. Cut intensifiers and filler
 
-Words like "very", "really", "quite", and "extremely" add no checkable fact, and readers skip them. Filler openers like `in order to`, `at this time`, and `going forward` do the same. Put a number, an action, or a comparison in the freed space.
+Words like `very`, `really`, `quite`, and `extremely` add no checkable fact, and readers skip them. Filler openers like `in order to`, `at this time`, and `going forward` do the same. Put a number, an action, or a comparison in the freed space.
 
 > 🚫 **Poor:** "This is a very simple form."
 > ✅ **Better:** "This form has three fields and one button."

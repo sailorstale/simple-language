@@ -90,6 +90,7 @@
     "findings": {
       "Subjective / hype adjective (advisory)": 3,
       "Biased or imprecise term": 3,
+      "Intensifier with no fact": 3,
       "Formal or long word (use a plain one)": 2,
       "Empty link text (\"here\", \"click here\")": 2,
       "Possible passive voice (advisory)": 2,

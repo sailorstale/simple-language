@@ -19,6 +19,8 @@ They do **not** apply in a few places. They do not govern code or commit message
 
 ## The core rules
 
+Ten rules cover the sentence, the word, and the shape of the page.
+
 ### 1. Lead with the point
 
 The first sentence is the answer. Say what happened, what matters, or what the reader must do, and put the detail after it. Most people read only a fraction of a page and scan it in an F-shaped pattern (NNG), so the opening carries the most weight. This is the inverted pyramid: the conclusion first, then details in falling order of importance (plainlanguage.gov, GOV.UK).

@@ -6,6 +6,8 @@ These rules come from four sources: the Microsoft Writing Style Guide, the Googl
 
 ## Lists
 
+Four questions decide a list. Which kind to use, how long an item runs, how the items line up, and when a list is not a list at all.
+
 ### Paragraph, bulleted, numbered, or definition
 
 Every kind of list has its place. The question is what material you hold.

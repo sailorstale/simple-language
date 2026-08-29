@@ -47,3 +47,7 @@ This is a very simple form, really quite clear.
 #### Skipped level
 
 Text under it exists.
+
+## A heading with a period.
+
+Text under it.

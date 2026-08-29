@@ -464,6 +464,7 @@ function checkHeadings(file) {
   }
   const lines = raws.map((raw, i) => ({ n: i + 1, raw }))
   let prevLevel = 0
+  let topLevel = 0
   let prevHeading = null
   let sawText = false
   for (const { n, raw } of lines) {
@@ -477,6 +478,13 @@ function checkHeadings(file) {
       add(file, n, 'заголовки', true, m[2], 'два заголовка подряд без текста между ними — либо подзаголовок лишний, либо они повторяют друг друга')
     if (prevLevel && level > prevLevel + 1)
       add(file, n, 'заголовки', true, m[2], `уровень перепрыгнут: после ${'#'.repeat(prevLevel)} идёт ${'#'.repeat(level)}`)
+    if (level === 1) {
+      topLevel++
+      if (topLevel > 1)
+        add(file, n, 'заголовки', true, m[2], 'заголовок первого уровня один на весь документ — это его название')
+    }
+    if (/[.,;]$/.test(m[2].trim()))
+      add(file, n, 'заголовки', true, m[2], 'заголовок не заканчивают точкой; вопросительный знак ставят, если нужен по смыслу')
     prevLevel = level
     prevHeading = m[2]
     sawText = false

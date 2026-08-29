@@ -403,6 +403,7 @@ function checkHeadings(file) {
   }
   const lines = raws.map((raw, i) => ({ n: i + 1, raw }))
   let prevLevel = 0
+  let topLevel = 0
   let prevHeading = null
   let sawText = false
   for (const { n, raw } of lines) {
@@ -416,6 +417,13 @@ function checkHeadings(file) {
       add(file, n, 'headings', true, m[2], 'two headings in a row with no text between them — either the subheading has no job or they repeat each other')
     if (prevLevel && level > prevLevel + 1)
       add(file, n, 'headings', true, m[2], `heading level skipped: ${'#'.repeat(level)} follows ${'#'.repeat(prevLevel)}`)
+    if (level === 1) {
+      topLevel++
+      if (topLevel > 1)
+        add(file, n, 'headings', true, m[2], 'a document has one top-level heading — its title')
+    }
+    if (/[.,;]$/.test(m[2].trim()))
+      add(file, n, 'headings', true, m[2], 'a heading does not end with a period; a question mark is fine where the sense needs it')
     prevLevel = level
     prevHeading = m[2]
     sawText = false

@@ -34,9 +34,9 @@ function summary(out) {
   return counts
 }
 
-function run(lang, file) {
+function run(lang, file, flags = []) {
   try {
-    return execFileSync('node', [CHECKERS[lang], join(HERE, 'fixtures', file)], { encoding: 'utf8' })
+    return execFileSync('node', [CHECKERS[lang], ...flags, join(HERE, 'fixtures', file)], { encoding: 'utf8' })
   } catch (e) {
     return (e.stdout || '') + (e.stderr || '')
   }
@@ -44,7 +44,7 @@ function run(lang, file) {
 
 let failed = 0
 for (const [file, spec] of Object.entries(expected)) {
-  const out = run(spec.lang, file)
+  const out = run(spec.lang, file, spec.flags || [])
   const got = summary(out)
   const want = spec.findings
   const names = new Set([...Object.keys(want), ...Object.keys(got)])

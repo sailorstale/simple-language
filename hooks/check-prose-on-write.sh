@@ -91,18 +91,20 @@ def changed_lines(file_path):
 # Находки из отчёта: номер строки, фрагмент, подсказка.
 label_line = 'строка' if ru else 'line'
 arrow = '↳' if ru else '->'
+# Отчёт печатает строку один раз, а под ней все подсказки к ней, поэтому
+# читаем подсказки до следующей строки, а не только первую.
 found = []
-rows = out.split('\n')
-for i, row in enumerate(rows):
+line_no = None
+fragment = ''
+for row in out.split('\n'):
     m = re.match(rf'^\s+{label_line} (\d+): (.*)$', row)
-    if not m:
+    if m:
+        line_no = int(m.group(1))
+        fragment = m.group(2)
         continue
-    hint = ''
-    if i + 1 < len(rows):
-        h = re.match(rf'^\s+{re.escape(arrow)} (.*)$', rows[i + 1])
-        if h:
-            hint = h.group(1)
-    found.append((int(m.group(1)), m.group(2), hint))
+    h = re.match(rf'^\s+{re.escape(arrow)} (.*)$', row)
+    if h and line_no is not None:
+        found.append((line_no, fragment, h.group(1)))
 
 only_changed = os.environ.get('SIMPLE_LANGUAGE_CHECK') != 'full'
 changed = changed_lines(path) if only_changed else None
@@ -128,8 +130,11 @@ else:
             'right; some findings are false alarms, and those you leave alone.\n')
 
 body = []
+last = None
 for n, fragment, hint in found[:25]:
-    body.append(f'\n  {label_line} {n}: {fragment}')
+    if n != last:
+        body.append(f'\n  {label_line} {n}: {fragment}')
+        last = n
     if hint:
         body.append(f'    {arrow} {hint}')
 if len(found) > 25:

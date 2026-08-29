@@ -233,7 +233,10 @@ function checkDate(file, { n, text }) {
 function checkEmptyOpener(file, { n, text, raw }) {
   if (raw.trim().startsWith('#')) return
   for (const [w, hint] of Object.entries(rules['empty-openers'] || {})) {
-    if (phraseRe(w).test(text)) add(file, n, 'opener', true, text, `"${w}" — ${hint}`)
+    if (!phraseRe(w).test(text)) continue
+    // "there is no X" states that something does not exist; no shorter form exists.
+    if (/\bthere (is|are) (no|nothing|nobody)\b/i.test(text)) continue
+    add(file, n, 'opener', true, text, `"${w}" — ${hint}`)
   }
 }
 
@@ -258,7 +261,7 @@ function checkParagraphStart(file, { n, raw }, prevBlank) {
 
 // Microsoft, writing for all abilities: a screen reader skips or misreads these signs.
 function checkSpecialChars(file, { n, text, raw }) {
-  if (raw.trim().startsWith('|')) return
+  if (raw.trim().startsWith('|') || raw.trim().startsWith('#')) return
   // Inside quotation marks the sign can be part of a name, so leave it alone.
   const outside = text.replace(/"[^"]*"/g, '""').replace(/«[^»]*»/g, '«»')
     .replace(/\*\*[^*]*\*\*/g, '**')

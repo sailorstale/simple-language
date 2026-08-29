@@ -41,3 +41,9 @@ DO NOT SHIP THIS TODAY.
 This is a very simple form, really quite clear.
 
 1. The only step of the procedure.
+
+## A section with no text
+
+#### Skipped level
+
+Text under it exists.

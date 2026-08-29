@@ -390,6 +390,38 @@ function checkSingleBullet(file, lines) {
   flush()
 }
 
+// Headings: do not skip levels (Google, W3C WAI), and two headings in a row with no
+// text between them is a mistake. Both checks are purely structural.
+function checkHeadings(file) {
+  // Читаем файл целиком: readLines выбрасывает примеры, код и помеченные куски,
+  // и без них два заголовка кажутся идущими подряд.
+  let raws
+  try {
+    raws = readFileSync(join(ROOT, file), 'utf8').split('\n')
+  } catch {
+    return
+  }
+  const lines = raws.map((raw, i) => ({ n: i + 1, raw }))
+  let prevLevel = 0
+  let prevHeading = null
+  let sawText = false
+  for (const { n, raw } of lines) {
+    const m = raw.match(/^(#{1,6})\s+(.*)$/)
+    if (!m) {
+      if (raw.trim()) sawText = true
+      continue
+    }
+    const level = m[1].length
+    if (prevHeading && !sawText)
+      add(file, n, 'headings', true, m[2], 'two headings in a row with no text between them — either the subheading has no job or they repeat each other')
+    if (prevLevel && level > prevLevel + 1)
+      add(file, n, 'headings', true, m[2], `heading level skipped: ${'#'.repeat(level)} follows ${'#'.repeat(prevLevel)}`)
+    prevLevel = level
+    prevHeading = m[2]
+    sawText = false
+  }
+}
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -433,6 +465,7 @@ for (const file of files) {
   }
   checkSingleStepList(file, lines)
   checkSingleBullet(file, lines)
+  checkHeadings(file)
 }
 
 // ── Report ───────────────────────────────────────────────────────────────────
@@ -461,6 +494,7 @@ const NAMES = {
   negatives: 'Double negative (advisory)',
   'one-step': 'Numbered list with a single item',
   'one-bullet': 'List with a single item',
+  headings: 'Heading structure mistake',
   idiom: 'Idiom or cultural reference (advisory)',
   intensifier: 'Intensifier with no fact',
 }

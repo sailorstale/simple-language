@@ -451,6 +451,38 @@ function checkSingleBullet(file, lines) {
   flush()
 }
 
+// Свод 6ж: уровни заголовков не перепрыгивают (Google, W3C WAI), а два заголовка
+// подряд без текста между ними — ошибка. Обе проверки чисто структурные.
+function checkHeadings(file) {
+  // Читаем файл целиком: readLines выбрасывает примеры, код и помеченные куски,
+  // и без них два заголовка кажутся идущими подряд.
+  let raws
+  try {
+    raws = readFileSync(join(ROOT, file), 'utf8').split('\n')
+  } catch {
+    return
+  }
+  const lines = raws.map((raw, i) => ({ n: i + 1, raw }))
+  let prevLevel = 0
+  let prevHeading = null
+  let sawText = false
+  for (const { n, raw } of lines) {
+    const m = raw.match(/^(#{1,6})\s+(.*)$/)
+    if (!m) {
+      if (raw.trim()) sawText = true
+      continue
+    }
+    const level = m[1].length
+    if (prevHeading && !sawText)
+      add(file, n, 'заголовки', true, m[2], 'два заголовка подряд без текста между ними — либо подзаголовок лишний, либо они повторяют друг друга')
+    if (prevLevel && level > prevLevel + 1)
+      add(file, n, 'заголовки', true, m[2], `уровень перепрыгнут: после ${'#'.repeat(prevLevel)} идёт ${'#'.repeat(level)}`)
+    prevLevel = level
+    prevHeading = m[2]
+    sawText = false
+  }
+}
+
 // ── Прогон ──────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -493,6 +525,7 @@ for (const file of files) {
   }
   checkSingleStepList(file, lines)
   checkSingleBullet(file, lines)
+  checkHeadings(file)
 }
 
 // ── Отчёт ───────────────────────────────────────────────────────────────────
@@ -521,6 +554,7 @@ const NAMES = {
   'отрицание': 'Двойное отрицание (проверь глазами)',
   'один-пункт': 'Нумерованный список из одного пункта',
   'один-маркер': 'Список из одного пункта',
+  'заголовки': 'Ошибка в устройстве заголовков',
   'реклама': 'Оценка без факта (проверь глазами)',
   'усилитель': 'Усилитель без факта',
   'оборот-времени': 'Оборот про «сейчас», который не нужен',

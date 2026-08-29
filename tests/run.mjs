@@ -42,7 +42,34 @@ function run(lang, file, flags = []) {
   }
 }
 
-let failed = 0
+// Хук читает отчёт проверки и пересобирает его для Claude. Формат отчёта и его
+// разбор живут в разных файлах, поэтому правка одного молча ломает другой.
+function checkHook() {
+  const fixture = join(HERE, 'fixtures', 'ru-narusheniya.md')
+  const input = JSON.stringify({ tool_name: 'Write', tool_input: { file_path: fixture } })
+  let out
+  try {
+    out = execFileSync('bash', [join(ROOT, 'hooks', 'check-prose-on-write.sh')], { input, encoding: 'utf8' })
+  } catch {
+    console.log('✗ хук проверки — не запустился')
+    return false
+  }
+  if (!out.trim()) {
+    console.log('✗ хук проверки — промолчал на файле с нарушениями')
+    return false
+  }
+  const hints = (JSON.parse(out).hookSpecificOutput.additionalContext.match(/↳/g) || []).length
+  const report = execFileSync('node', [CHECKERS.ru, fixture], { encoding: 'utf8' })
+  const total = (report.match(/↳/g) || []).length
+  if (hints !== total) {
+    console.log(`✗ хук проверки — показал ${hints} подсказок из ${total}`)
+    return false
+  }
+  console.log(`✓ хук проверки — показал все ${hints} подсказок`)
+  return true
+}
+
+let failed = checkHook() ? 0 : 1
 for (const [file, spec] of Object.entries(expected)) {
   const out = run(spec.lang, file, spec.flags || [])
   const got = summary(out)

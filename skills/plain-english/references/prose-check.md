@@ -61,3 +61,7 @@ The check fixes nothing. It shows the spot and says what is wrong, and you decid
 ## Extending the word lists
 
 The words live beside the script in `prose-rules.json`, under these keys: `formal`, `hidden-verbs`, `empty-links`, `hype`, `easy`, `loaded`, `latin`, `empty-openers`, `paragraph-openers`, `hidden-negatives`, `chatty`, and `idioms`. Edit them by hand. Spot a formal word the check missed, add a line with its plain replacement, and the check gets better for every document after it.
+
+## Keeping the check honest
+
+The repository holds sample files with the findings to expect, plus a run that compares them: `node tests/run.mjs`. It also checks the write-time hook, since the report format and the hook that parses it live in separate files.

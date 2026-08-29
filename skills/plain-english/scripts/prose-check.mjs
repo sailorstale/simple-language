@@ -361,6 +361,35 @@ function checkIntensifiers(file, { n, text, raw }) {
   }
 }
 
+// SKILL.md: a list shows that several equal things belong together, so a list of
+// one item is a paragraph. The numbered case is checked separately; this is bullets.
+function checkSingleBullet(file, lines) {
+  let start = -1
+  let count = 0
+  let onlyLink = false
+  const flush = () => {
+    if (count === 1 && start >= 0 && !onlyLink)
+      add(file, start, 'one-bullet', true, 'bulleted list with a single item', 'a list of one item does not exist — make it a paragraph')
+    start = -1
+    count = 0
+    onlyLink = false
+  }
+  for (const { n, raw } of lines) {
+    const t = raw.trim()
+    if (/^[-*]\s/.test(t) && !/^\s/.test(raw)) {
+      if (start < 0) start = n
+      count++
+      // Пункт-ссылка целиком — это строка оглавления, а не список из одного пункта.
+      if (/^[-*]\s*\[[^\]]+\]\([^)]*\)\s*$/.test(t)) onlyLink = true
+    } else if (t === '' || /^\s/.test(raw)) {
+      // a blank line or a nested sub-item does not break the list
+    } else {
+      flush()
+    }
+  }
+  flush()
+}
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -403,6 +432,7 @@ for (const file of files) {
     prevBlank = line.raw.trim() === ''
   }
   checkSingleStepList(file, lines)
+  checkSingleBullet(file, lines)
 }
 
 // ── Report ───────────────────────────────────────────────────────────────────
@@ -430,6 +460,7 @@ const NAMES = {
   range: 'Range written with a hyphen',
   negatives: 'Double negative (advisory)',
   'one-step': 'Numbered list with a single item',
+  'one-bullet': 'List with a single item',
   idiom: 'Idiom or cultural reference (advisory)',
   intensifier: 'Intensifier with no fact',
 }

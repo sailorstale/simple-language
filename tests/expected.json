@@ -79,7 +79,8 @@
       "Двойное отрицание (проверь глазами)": 1,
       "Список, который был абзацем": 1,
       "Оборот про «сейчас», который не нужен": 1,
-      "Нумерованный список из одного пункта": 1
+      "Нумерованный список из одного пункта": 1,
+      "Список из одного пункта": 1
     }
   },
   "en-all-rules.md": {
@@ -111,7 +112,8 @@
       "Range written with a hyphen": 1,
       "Double negative (advisory)": 1,
       "ALL-CAPS run": 1,
-      "Numbered list with a single item": 1
+      "Numbered list with a single item": 1,
+      "List with a single item": 1
     }
   }
 }

@@ -55,6 +55,7 @@
       "--всё"
     ],
     "findings": {
+      "Пустой текст ссылки («здесь», «тут»)": 3,
       "Работа читателя названа лёгкой": 3,
       "Усилитель без факта": 3,
       "Ошибка в устройстве заголовков": 3,
@@ -69,7 +70,6 @@
       "Запрещённая связка «не X, а Y»": 1,
       "Слишком длинное предложение": 1,
       "Проценты вместо долей": 1,
-      "Пустой текст ссылки («здесь», «тут»)": 1,
       "Косая черта вместо слова": 1,
       "Дата цифрами читается двояко": 1,
       "Пустой зачин вместо действия": 1,
@@ -91,12 +91,12 @@
       "--all"
     ],
     "findings": {
+      "Empty link text (\"here\", \"click here\")": 4,
       "Subjective / hype adjective (advisory)": 3,
       "Biased or imprecise term": 3,
       "Intensifier with no fact": 3,
       "Heading structure mistake": 3,
       "Formal or long word (use a plain one)": 2,
-      "Empty link text (\"here\", \"click here\")": 2,
       "Possible passive voice (advisory)": 2,
       "The reader's work called easy": 2,
       "Exclamation mark, \"let's\", or shorthand": 2,

@@ -53,3 +53,7 @@ Text under it exists.
 Text under it.
 
 The first sentence here. The second sentence here. The third sentence here. The fourth sentence here. The fifth sentence here. The sixth sentence here.
+
+See [a link text that runs for a whole sentence and reads badly](address).
+
+One [document](a1) and another [document](a2).

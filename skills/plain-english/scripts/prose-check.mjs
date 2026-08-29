@@ -452,6 +452,34 @@ function checkParagraphLength(file) {
   }
 }
 
+// Link text: keep it to about four words, and give different destinations different
+// text, since a reader takes two links worded alike to lead to the same place.
+function checkLinkQuality(file) {
+  let raws
+  try {
+    raws = readFileSync(join(ROOT, file), 'utf8').split('\n')
+  } catch {
+    return
+  }
+  const seen = new Map()
+  raws.forEach((raw, i) => {
+    const re = /(^|[^!])\[([^\]]+)\]\(([^)]*)\)/g
+    let m
+    while ((m = re.exec(raw))) {
+      const label = m[2].trim()
+      const target = m[3].trim()
+      const words = label.split(/\s+/).filter(Boolean).length
+      if (words > 8)
+        add(file, i + 1, 'link', true, label, `link text of ${words} words — keep it to about four so it reads at a glance`)
+      const key = label.toLowerCase()
+      const before = seen.get(key)
+      if (before && before !== target)
+        add(file, i + 1, 'link', true, label, 'the same link text points at two different pages — a reader takes them for one')
+      else if (!before) seen.set(key, target)
+    }
+  })
+}
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -497,6 +525,7 @@ for (const file of files) {
   checkSingleBullet(file, lines)
   checkHeadings(file)
   checkParagraphLength(file)
+  checkLinkQuality(file)
 }
 
 // ── Report ───────────────────────────────────────────────────────────────────

@@ -513,6 +513,34 @@ function checkParagraphLength(file) {
   }
 }
 
+// Свод 6и: текст ссылки короткий (около четырёх слов) и у разных целей разный,
+// потому что одинаковую подпись читатель принимает за одну и ту же страницу.
+function checkLinkQuality(file) {
+  let raws
+  try {
+    raws = readFileSync(join(ROOT, file), 'utf8').split('\n')
+  } catch {
+    return
+  }
+  const seen = new Map()
+  raws.forEach((raw, i) => {
+    const re = /(^|[^!])\[([^\]]+)\]\(([^)]*)\)/g
+    let m
+    while ((m = re.exec(raw))) {
+      const label = m[2].trim()
+      const target = m[3].trim()
+      const words = label.split(/\s+/).filter(Boolean).length
+      if (words > 8)
+        add(file, i + 1, 'ссылка-текст', true, label, `текст ссылки из ${words} слов — оставь около четырёх, чтобы он читался с первого взгляда`)
+      const key = label.toLowerCase()
+      const before = seen.get(key)
+      if (before && before !== target)
+        add(file, i + 1, 'ссылка-текст', true, label, 'одинаковый текст ведёт на разные страницы — читатель примет их за одну')
+      else if (!before) seen.set(key, target)
+    }
+  })
+}
+
 // ── Прогон ──────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -557,6 +585,7 @@ for (const file of files) {
   checkSingleBullet(file, lines)
   checkHeadings(file)
   checkParagraphLength(file)
+  checkLinkQuality(file)
 }
 
 // ── Отчёт ───────────────────────────────────────────────────────────────────

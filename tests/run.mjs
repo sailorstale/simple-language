@@ -9,7 +9,8 @@
 //
 // Ожидания лежат в tests/expected.json и правятся руками вместе с правилами.
 
-import { readFileSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { execFileSync } from 'node:child_process'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -97,7 +98,55 @@ function checkReminder() {
   return true
 }
 
+// Установка и удаление: ставим набор в песочницу, смотрим файлы и настройки,
+// потом убираем и проверяем, что чужие записи целы, а наши ушли.
+function checkInstall() {
+  const box = join(tmpdir(), `simple-language-test-${process.pid}`)
+  const settings = join(box, '.claude', 'settings.json')
+  const problems = []
+  try {
+    rmSync(box, { recursive: true, force: true })
+    mkdirSync(join(box, '.claude'), { recursive: true })
+    writeFileSync(settings, JSON.stringify({
+      model: 'opus',
+      hooks: { SessionStart: [{ hooks: [{ type: 'command', command: 'chuzhoy.sh' }] }] },
+    }))
+    execFileSync('bash', [join(ROOT, 'install.sh')], {
+      input: '3\n1\n1\n', encoding: 'utf8', env: { ...process.env, HOME: box },
+    })
+    for (const f of ['skills/pishi-prosto/SKILL.md', 'skills/plain-english/SKILL.md',
+                     'hooks/write-simply-reminder.sh', 'hooks/check-prose-on-write.sh']) {
+      if (!existsSync(join(box, '.claude', f))) problems.push(`после установки нет файла ${f}`)
+    }
+    const after = JSON.parse(readFileSync(settings, 'utf8'))
+    if (after.model !== 'opus') problems.push('установка затёрла чужие настройки')
+    if (!after.hooks?.SessionStart) problems.push('установка убрала чужой хук')
+    if (!after.hooks?.UserPromptSubmit) problems.push('установка не подключила напоминание')
+
+    execFileSync('bash', [join(ROOT, 'uninstall.sh')], {
+      encoding: 'utf8', env: { ...process.env, HOME: box },
+    })
+    if (existsSync(join(box, '.claude', 'skills', 'pishi-prosto'))) problems.push('удаление оставило скил')
+    const cleaned = JSON.parse(readFileSync(settings, 'utf8'))
+    if (cleaned.model !== 'opus') problems.push('удаление затёрло чужие настройки')
+    if (!cleaned.hooks?.SessionStart) problems.push('удаление убрало чужой хук')
+    if (cleaned.hooks?.UserPromptSubmit) problems.push('удаление оставило наш хук в настройках')
+  } catch (e) {
+    problems.push(`не отработало: ${e.message.split('\n')[0]}`)
+  } finally {
+    rmSync(box, { recursive: true, force: true })
+  }
+  if (problems.length) {
+    console.log('✗ установка и удаление')
+    for (const p of problems) console.log(`    ${p}`)
+    return false
+  }
+  console.log('✓ установка и удаление — файлы на месте, чужие настройки целы')
+  return true
+}
+
 let failed = 0
+if (!checkInstall()) failed++
 if (!checkHook()) failed++
 if (!checkReminder()) failed++
 for (const [file, spec] of Object.entries(expected)) {

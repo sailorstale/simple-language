@@ -182,6 +182,8 @@ node tests/run.mjs
 
 The same check runs on push: `.github/workflows/prose.yml` runs the tests and checks the changed documents inside GitHub.
 
+The run covers more than the search patterns. It installs the set into a sandbox and removes it again, checks that other settings survive, and runs both hooks.
+
 Run it after any edit to the search patterns. Patterns break quietly: you fix one rule and a neighbouring one stops firing. When a finding changes on purpose, update `tests/expected.json`.
 
 ## Licence

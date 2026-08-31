@@ -45,6 +45,28 @@ function run(lang, file, flags = []) {
 
 // Хук читает отчёт проверки и пересобирает его для Claude. Формат отчёта и его
 // разбор живут в разных файлах, поэтому правка одного молча ломает другой.
+// Хук зовёт скил из ~/.claude, а не из репозитория. Если установленная копия
+// отстала, хук показывает не то, что показывает свежая проверка.
+function checkInstalledCopy() {
+  const home = process.env.HOME || ''
+  const problems = []
+  for (const skill of ['pishi-prosto', 'plain-english']) {
+    const mine = join(ROOT, 'skills', skill, 'scripts', 'prose-check.mjs')
+    const theirs = join(home, '.claude', 'skills', skill, 'scripts', 'prose-check.mjs')
+    if (!existsSync(theirs)) continue
+    if (readFileSync(mine, 'utf8') !== readFileSync(theirs, 'utf8'))
+      problems.push(`${skill}: установленная копия отстала от репозитория`)
+  }
+  if (problems.length) {
+    console.log('✗ установленные копии')
+    for (const p of problems) console.log(`    ${p}`)
+    console.log('    почини: cp -R skills/* ~/.claude/skills/')
+    return false
+  }
+  console.log('✓ установленные копии совпадают с репозиторием')
+  return true
+}
+
 function checkHook() {
   const fixture = join(HERE, 'fixtures', 'ru-narusheniya.md')
   const input = JSON.stringify({ tool_name: 'Write', tool_input: { file_path: fixture } })
@@ -147,6 +169,7 @@ function checkInstall() {
 
 let failed = 0
 if (!checkInstall()) failed++
+if (!checkInstalledCopy()) failed++
 if (!checkHook()) failed++
 if (!checkReminder()) failed++
 for (const [file, spec] of Object.entries(expected)) {

@@ -494,6 +494,36 @@ function checkLinkQuality(file) {
   })
 }
 
+// Formatting: a document breaks into pieces, because readers scan before they read.
+// A run of plain paragraphs with no heading, list, table, or quote is a wall, and a
+// reader skips the whole of it.
+function checkWallOfText(file) {
+  let raws
+  try {
+    raws = readFileSync(join(ROOT, file), 'utf8').split('\n')
+  } catch {
+    return
+  }
+  let inCode = false
+  let run = 0
+  let start = 0
+  const flush = () => {
+    if (run >= 6)
+      add(file, start, 'wall', true, `${run} paragraphs in a row with no list or subheading`,
+        'break the passage up: turn a run of items into a list, add a subheading, or use a table')
+    run = 0
+  }
+  for (let i = 0; i < raws.length; i++) {
+    const t = raws[i].trim()
+    if (t.startsWith('```')) { inCode = !inCode; continue }
+    if (inCode || !t) continue
+    if (/^[#>|]/.test(t) || /^\s*(?:[-*]|\d+[.)])\s/.test(raws[i])) { flush(); continue }
+    if (run === 0) start = i + 1
+    run++
+  }
+  flush()
+}
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 
 const files = targets()
@@ -540,6 +570,7 @@ for (const file of files) {
   checkHeadings(file)
   checkParagraphLength(file)
   checkLinkQuality(file)
+  checkWallOfText(file)
 }
 
 // ── Report ───────────────────────────────────────────────────────────────────
@@ -571,6 +602,7 @@ const NAMES = {
   'one-bullet': 'List with a single item',
   headings: 'Heading structure mistake',
   paragraph: 'Paragraph too long',
+  wall: 'Wall of text with no formatting',
   idiom: 'Idiom or cultural reference (advisory)',
   intensifier: 'Intensifier with no fact',
 }

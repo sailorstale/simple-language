@@ -99,27 +99,30 @@ A long section is never one block. It is a short lead plus several labelled piec
 
 ## Headings
 
-Headings carry the structure; bold text does not. Bold is a way to emphasise a word inside a line, not to name a section.
+Eight rules keep headings in order.
 
-When a piece names a section with content of its own, make it a real heading rather than a bold item. Use the full range of levels from `#` to `#####`, and give a section as deep a heading as its nesting. The document then has a real outline you can see and jump through, and it renders the same in any viewer.
-
-Keep bold to one or two words for emphasis, and to the lead-in of a short piece that does not warrant its own section. Keep it sparse. NNG measurements put the ceiling at about three parts in ten, beyond which the emphasis stops helping the eye.
-
-Do not skip heading levels: `###` comes after `##`, never `#####` (Google, W3C WAI). Skipping breaks the outline and the navigation for anyone moving by headings. English headings use sentence case, with a capital on the first word only.
-
-A heading does not end with a period, though a question mark is fine where the sense needs it (Microsoft). Keep headings at one level in the same form, the way list items stay parallel. Every subheading of a section opens with a noun, say, or every one opens with a verb.
-
-A heading must be meaningful, rather than a generic word or a play on words (Google, NNG). The reader decides from the heading whether to read the section. "Overview", "Miscellaneous", and clever riddle-headings give them nothing to decide on. Lead the heading with what matters to the reader, ahead of the name of a feature, a command, or a product.
-
-Match the form of the heading to the sense of the section (Google, Microsoft). A section about an action gets a verb heading: "Create a copy". A section about a concept gets a noun-phrase heading: "How copies work". Do not start a heading with an "-ing" word. And make a lower-level heading more specific than its parent, so the hierarchy reads from general to particular.
-
-The top-level heading (`#`) is one per document — it is the document's title. Everything below is `##` and deeper. There should not be several top-level headings in one file (Google).
-
-Keep a link, a hand-typed section number, and code in backticks out of a heading (Google). A link there blends into the heading's own style. Hand numbering breaks as soon as you insert or remove a section, and code makes the outline unreadable for someone searching by meaning. Move the link into the text under the heading.
-
-Two headings in a row with no text between them is a mistake (Google, Microsoft). When the upper heading has nothing to say before the first subheading, either the subheading has no job or the two headings repeat each other.
-
-A short label is a bold run-in, not a heading of its own. Keep a one- or two-line note like "See also" as a bold lead-in to a paragraph (Microsoft calls this a run-in heading). Start a real `####` heading only when two or more distinct subtopics, or a sizeable block of text, sit under it. One level of headings is usually enough for a page or two (Microsoft), so do not split every small note into its own heading.
+- **Headings carry the structure**, and bold does not: bold emphasises a word inside a line.
+  - When a piece names a section with content of its own, make it a real heading.
+  - Use the full range from `#` to `#####`, and give a deeper section a deeper heading.
+  - Keep bold to one or two words, or to the lead-in of a short piece. NNG puts the ceiling at about three parts in ten.
+- **Do not skip levels:** `###` comes after `##`, never `#####` (Google, W3C WAI).
+  - English headings use sentence case, with a capital on the first word only.
+- **End a heading without a period**, though a question mark is fine where the sense needs it (Microsoft).
+  - Keep headings at one level in the same form: every one opens with a noun, say, or every one with a verb.
+- **Make the heading meaningful**, rather than a generic word or a play on words (Google, NNG).
+  - "Overview", "Miscellaneous", and riddle-headings give the reader nothing to decide on.
+  - Lead with what matters to the reader, ahead of a feature, command, or product name.
+- **Match the form to the sense** (Google, Microsoft).
+  - A section about an action takes a verb heading: "Create a copy".
+  - A section about a concept takes a noun phrase: "How copies work".
+  - Do not open a heading with an "-ing" word, and make a lower heading more specific than its parent.
+- **Keep one top-level heading per document** — it is the title, and everything below is `##` or deeper (Google).
+- **Keep links, hand-typed numbers, and code out of headings** (Google).
+  - A link blends into the heading's own style, and hand numbering breaks when you insert a section.
+- **Two headings in a row with no text between them is a mistake** (Google, Microsoft).
+  - When the upper heading has nothing to say first, either the subheading has no job or they repeat each other.
+- **Make a short label a bold run-in**, not a heading of its own (Microsoft).
+  - Start a real heading when two or more subtopics, or a sizeable block of text, sit under it.
 
 ### A heading and the line beneath it
 

@@ -137,7 +137,7 @@ Environment variables change the behaviour:
 | `SIMPLE_LANGUAGE_FULL_EVERY=10` | bring repeats back: the full rulebook then goes out every tenth message |
 | `SIMPLE_LANGUAGE_MODE=full` | always send the full rulebook, as the first versions did |
 | `SIMPLE_LANGUAGE_MODE=off` | stay quiet and send nothing |
-| `SIMPLE_LANGUAGE_CHECK=off` | do not check documents after they are written |
+| `SIMPLE_LANGUAGE_CHECK=off` | skip the check after Claude writes a document |
 | `SIMPLE_LANGUAGE_CHECK=full` | report findings across the whole file, not only the lines you touched |
 
 The hook needs `python3` to detect the language and count messages. Without it, it sends the full text every time and takes the language from `SIMPLE_LANGUAGE_LANG`, defaulting to Russian.
@@ -177,7 +177,7 @@ The plugin goes away with one command in a Claude session:
 /plugin uninstall simple-language
 ```
 
-A manual install is removed by the script. It clears the skills, the hooks, and the settings entries, including the hooks of earlier versions:
+The script removes a manual install. It clears the skills, the hooks, and the settings entries, including the hooks of earlier versions:
 
 ```bash
 cd simple-language && ./uninstall.sh
@@ -198,6 +198,26 @@ The same check runs on push: `.github/workflows/prose.yml` runs the tests and ch
 The run covers more than the search patterns. It reads the plugin manifest. It installs the set into a sandbox and removes it again, checking that other settings survive. It also runs both hooks on Russian and English messages.
 
 Run it after any edit to the search patterns. Patterns break quietly: you fix one rule and a neighbouring one stops firing. When a finding changes on purpose, update `tests/expected.json`.
+
+## Check that the plugin helps
+
+The tests above check the checker and the hooks one by one. Plugin evals look at the result as a whole: Claude gets an ordinary request, and then the graders judge what it wrote. The cases live in `evals/`, one folder per request. Each holds `prompt.md` with the message and a `graders/` folder with the checks. A check is a regex over the reply or a file, a test that the skill was invoked, or a rubric for a judge model.
+
+The suite has seven cases. Two ask about a technical term, in Russian and in English. Two hand Claude a percentage figure. Two ask for a document written through Write. The last one is a code request, where the plugin must stay out of the way.
+
+Run from the repository root; you need Claude Code 2.1.269 or later:
+
+```bash
+claude plugin eval . --allow-tools Write
+```
+
+Each case runs three times with the plugin and three times without it. The report has a Δ column, and it shows what the plugin added to the result. A run costs money, because these are real model calls on your account. One case without the baseline is cheaper:
+
+```bash
+claude plugin eval . --case en-explains-jargon --runs 1 --ablation none
+```
+
+Only the two document cases need the `--allow-tools Write` grant, and without it they end in an error. Reports land in `evals/results/`, and that folder stays out of git.
 
 ## Licence
 

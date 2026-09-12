@@ -9,7 +9,7 @@
 //
 // Ожидания лежат в tests/expected.json и правятся руками вместе с правилами.
 
-import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { execFileSync } from 'node:child_process'
 import { dirname, join, resolve } from 'node:path'
@@ -171,6 +171,52 @@ function checkPlugin() {
   return true
 }
 
+// Эвалы плагина: у каждого кейса есть prompt.md с шапкой и хотя бы один грейдер
+// с типом, а регулярки грейдеров собираются в JavaScript. Сами прогоны стоят
+// денег и идут отдельно: claude plugin eval .
+function checkEvals() {
+  const problems = []
+  const root = join(ROOT, 'evals')
+  const front = (text) => {
+    const m = text.match(/^---\n([\s\S]*?)\n---/)
+    return m ? m[1] : null
+  }
+  const field = (block, key) => {
+    const m = block.match(new RegExp(`^${key}:\\s*(.+)$`, 'm'))
+    return m ? m[1].trim().replace(/^'(.*)'$/, '$1') : null
+  }
+  const cases = readdirSync(root).filter((d) => existsSync(join(root, d, 'prompt.md')))
+  if (!cases.length) problems.push('в evals/ нет ни одного кейса')
+  for (const name of cases) {
+    const prompt = readFileSync(join(root, name, 'prompt.md'), 'utf8')
+    const head = front(prompt)
+    if (!head) problems.push(`${name}: в prompt.md нет шапки`)
+    if (!prompt.split('---').slice(2).join('---').trim()) problems.push(`${name}: в prompt.md пустой текст запроса`)
+    const dir = join(root, name, 'graders')
+    const graders = existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.md')) : []
+    if (!graders.length) problems.push(`${name}: нет грейдеров`)
+    for (const g of graders) {
+      const block = front(readFileSync(join(dir, g), 'utf8'))
+      const type = block && field(block, 'type')
+      if (!type) { problems.push(`${name}/${g}: не указан type`); continue }
+      if (type === 'regex') {
+        const pattern = field(block, 'pattern')
+        try { new RegExp(pattern, field(block, 'flags') || '') } catch (e) { problems.push(`${name}/${g}: регулярка не собирается: ${e.message}`) }
+        if (/\\b\(?[а-яё]/i.test(pattern)) problems.push(`${name}/${g}: \\b перед кириллицей в JavaScript не работает`)
+      }
+      if (type === 'llm' && !readFileSync(join(dir, g), 'utf8').split('---').slice(2).join('---').trim())
+        problems.push(`${name}/${g}: у llm-грейдера пустой рубрикатор`)
+    }
+  }
+  if (problems.length) {
+    console.log('✗ эвалы плагина')
+    for (const p of problems) console.log(`    ${p}`)
+    return false
+  }
+  console.log(`✓ эвалы плагина — кейсов ${cases.length}, грейдеры читаются`)
+  return true
+}
+
 // Установка и удаление: ставим набор в песочницу, смотрим файлы и настройки,
 // потом убираем и проверяем, что чужие записи целы, а наши ушли.
 function checkInstall() {
@@ -222,6 +268,7 @@ function checkInstall() {
 
 let failed = 0
 if (!checkPlugin()) failed++
+if (!checkEvals()) failed++
 if (!checkInstall()) failed++
 if (!checkInstalledCopy()) failed++
 if (!checkHook()) failed++

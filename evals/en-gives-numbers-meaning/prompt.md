@@ -1,6 +1,6 @@
 ---
-description: An English message with a percentage. The reply should say what the number means for the reader.
-expected_outcome: The reply gives the figure a meaning, such as "about two in five" or "less than half", and says what it means for the target.
+description: An English message with a percentage. The reply should say what the number means for the reader, as a share or against the expected pace.
+expected_outcome: The reply relates the figure to something the reader grasps, such as "about two in five" or "ahead of the quarter's pace", and says what it means for the target.
 tags: [en, chat, numbers]
 max_turns: 5
 allowed_tools: [Skill]

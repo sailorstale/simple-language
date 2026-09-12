@@ -2,12 +2,12 @@
 type: llm
 ---
 
-The reply explains what an idempotent API request is.
+The reply explains what an idempotent API request is and why it matters.
 
-PASS if all of the following hold:
-- The first sentence already answers the question, and the detail follows it.
-- Sentences are complete, with a subject and a verb, and none runs far past 25 words.
-- The term is explained once in everyday words. Any other specialist term is explained the first time it appears.
-- The voice is active and the reply addresses the reader as "you" where it gives advice.
+PASS if all four hold:
+1. The first sentence already says what an idempotent request is. Background does not come first.
+2. The reply is written in complete sentences. A bulleted list is fine when each bullet is a sentence with a verb; headline fragments without verbs are not.
+3. "Idempotent" is explained in everyday words. Any other specialist term the reply introduces, such as "idempotency key" or "load balancer", gets a short plain-words explanation the first time it appears, or is avoided.
+4. No sentence runs past about 30 words.
 
-FAIL if the reply opens with background instead of the answer, if it is a dense paragraph of unexplained jargon, if it is a list of headline fragments without verbs, or if it uses long formal words where short ones exist.
+FAIL if any of the four is broken. Do not fail the reply for its length, its use of headings, or its choice of examples.

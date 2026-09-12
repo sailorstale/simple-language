@@ -211,7 +211,9 @@ Run from the repository root; you need Claude Code 2.1.269 or later:
 claude plugin eval . --allow-tools Write --threshold 0.8
 ```
 
-The 0.8 threshold means a case counts as passed when it scores at least 0.8 out of 1 with the plugin. Without a threshold the command treats one slip of the judge as a failure. Each case runs three times with the plugin and three times without it. The report has a Δ column, and it shows what the plugin added to the result. A run costs money, because these are real model calls on your account. One case without the baseline is cheaper:
+The 0.8 threshold means a case counts as passed when it scores at least 0.8 out of 1 with the plugin. Without a threshold the command treats one slip of the judge as a failure.
+
+Each case runs three times with the plugin and three times without it. The report has a Δ column, and it shows what the plugin added to the result. A run costs money, because these are real model calls on your account. One case without the baseline is cheaper:
 
 ```bash
 claude plugin eval . --case en-explains-jargon --runs 1 --ablation none

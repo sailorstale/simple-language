@@ -2,7 +2,7 @@
 
 [Скил для русского](README.md) | **English skill**
 
-Claude stops writing dense paragraphs full of jargon and starts explaining in everyday words. The rules plug into Claude Code once, and after that Claude holds to them on its own, without a reminder in every conversation.
+Claude stops writing dense paragraphs full of jargon and starts explaining in everyday words. The rules install into Claude Code as a plugin once. After that Claude holds to them on its own, without a reminder in every conversation. It picks the language from your message: an English message gets the English rules, a Russian one gets the Russian rules.
 
 ## What changes in the text
 
@@ -26,7 +26,7 @@ Claude stops writing dense paragraphs full of jargon and starts explaining in ev
 
 ## What you need first
 
-- **Claude Code**, in a version that understands skills and hooks.
+- **Claude Code**, in a version that understands plugins, skills, and hooks.
 - **Node.js**, which only the checker needs, because the skill and the hook run without it (we tested the checker on Node 24).
     - The simplest way is to ask Claude to install Node.js for you.
   - The second way is to download the installer from [nodejs.org](https://nodejs.org) and press the LTS button.
@@ -36,55 +36,59 @@ Claude stops writing dense paragraphs full of jargon and starts explaining in ev
 
 ## Install
 
-The easiest way is to ask Claude. Clone the repository, open the folder in Claude Code, and say: "install these writing rules for yourself". Claude reads the files, copies the skill and the hook into `~/.claude`, and edits the settings.
+The set installs as a Claude Code plugin. Two commands in a Claude session, and it fetches the skills and hooks from GitHub on its own:
 
-```bash
-git clone https://github.com/sailorstale/simple-language.git
+```
+/plugin marketplace add sailorstale/simple-language
+/plugin install simple-language@simple-language
 ```
 
-The rest is here in case you install without Claude, or you want to see exactly what happens.
+The first command adds our plugin catalogue, the second installs the plugin from it. There is nothing to copy and nothing to write into `settings.json`: the hooks live inside the plugin and switch on with it. The same `/plugin` command updates and removes it.
+
+Two fallback ways follow, in case plugins do not suit you or you want to see exactly what happens inside.
 
 ### The installer
 
-Run the script. It asks for a language, then copies and connects everything.
+Clone the repository and run the script. It copies both skills and both hooks into `~/.claude` and wires the hooks into the settings.
 
 ```bash
+git clone https://github.com/sailorstale/simple-language.git
 cd simple-language && ./install.sh
 ```
 
-The installer leaves other entries in `~/.claude/settings.json` alone. It adds its own line beside them and saves the old file as `settings.json.bak`. If the hook is already wired, it will not add it twice. It needs `python3` to edit the settings, and without it the script asks you to add the entry by hand.
+The installer leaves other entries in `~/.claude/settings.json` alone. It adds its own lines beside them and saves the old file as `settings.json.bak`. If the hooks are already wired, it will not add them twice. The two language hooks of earlier versions it replaces with the single new one. It needs `python3` to edit the settings, and without it the script asks you to add the entry by hand.
 
 ### By hand, step by step
 
-1. **Copy the skill** into the Claude skills folder:
+1. **Copy the skills** into the Claude skills folder:
 
 ```bash
-cp -R skills/plain-english ~/.claude/skills/
+cp -R skills/pishi-prosto skills/plain-english ~/.claude/skills/
 ```
 
-2. **Copy the hook** and make it executable:
+2. **Copy the hooks** and make them executable:
 
 ```bash
-cp hooks/write-simply-en.sh ~/.claude/hooks/ && chmod +x ~/.claude/hooks/write-simply-en.sh
+cp hooks/write-simply.sh hooks/check-prose-on-write.sh ~/.claude/hooks/ && chmod +x ~/.claude/hooks/write-simply.sh ~/.claude/hooks/check-prose-on-write.sh
 ```
 
-3. **Connect the hook** in `~/.claude/settings.json`: add the block from [settings-snippet-en.json](settings-snippet-en.json).
+3. **Connect the hooks** in `~/.claude/settings.json`: add the block from [settings-snippet.json](settings-snippet.json).
 
-4. **Connect the check-on-write hook** if you want findings to arrive on their own. Copy `hooks/check-prose-on-write.sh` into `~/.claude/hooks/`, make it executable, and add the block from [settings-snippet-check.json](settings-snippet-check.json).
+> If the file already has a `hooks` section, put the `UserPromptSubmit` and `PostToolUse` entries inside it. Do not add a second `hooks` section.
 
-> If the file already has a `hooks` section, put the `UserPromptSubmit` entry inside it. Do not add a second `hooks` section.
-
-Then restart your Claude session, so it picks up the new hook and sees the skill.
+Then restart your Claude session, so it picks up the new hooks and sees the skills.
 
 ## Check that it worked
 
 Three ways, from the quickest to the clearest.
 
-1. **Run the check on any file.** If it prints a report, the skill and its script are in place:
+1. **Run the check on any file.** If it prints a report, the skill and its script are in place. With a manual install the path is:
 
 ```bash
 node ~/.claude/skills/plain-english/scripts/prose-check.mjs "path/to/file.md"
 ```
+
+The plugin lives elsewhere, so it is easier to ask Claude: "run the plain-english check on this file".
 
 A report looks like this:
 
@@ -96,7 +100,7 @@ README.md — 1 finding(s)
       -> 33 words in one sentence — split it (GOV.UK: check anything over 25)
 ```
 
-2. **Open `~/.claude/settings.json`.** Its `hooks` section should hold a `UserPromptSubmit` entry pointing at `write-simply-en.sh`.
+2. **List the hooks.** The `/hooks` command in a Claude session shows the connected hooks, and `write-simply.sh` should be among them. With a manual install the same entry sits in `~/.claude/settings.json` under `UserPromptSubmit`.
 
 3. **Start a new session and ask Claude to explain something hard.** The answer should come in everyday words and short sentences. A dense paragraph of jargon means the hook did not connect.
 
@@ -104,8 +108,8 @@ README.md — 1 finding(s)
 
 The set has three parts, and each does a different job.
 
-- **The hook** in `hooks/` hands Claude a short digest of the rules on every message, so they do not fade in ordinary chat.
-- **The skill** in `skills/plain-english/` holds the full rulebook and opens for a long piece of text or when you call `/plain-english`.
+- **The hook** in `hooks/` hands Claude a short digest of the rules on every message, so they do not fade in ordinary chat. It picks the language from the message: Cyrillic letters mean the Russian digest, anything else the English one. File paths, links, and code do not count, so "open src/App.tsx" stays an English message.
+- **The skill** in `skills/plain-english/` holds the full rulebook and opens for a long piece of text or when you call `/plain-english`. The Russian skill `pishi-prosto` sits beside it and works the same way.
 - **The checker** in `skills/plain-english/scripts/` reads a finished file and points at the places where the rules break.
 - **A second hook** in `hooks/` runs that check on its own as soon as Claude writes a document, and hands the findings back.
 
@@ -119,7 +123,7 @@ A spoken request lasts a few messages and then fades, because the conversation m
 
 The hook pays per message you send, and its copies stay in the conversation history. So it sends the full rulebook rarely.
 
-- **The full rulebook** goes out once, on the first message of the session. It runs to 1,465 characters and carries only what slips in conversation, because the formatting detail lives in the skill.
+- **The full rulebook** goes out once, on the first message of the session in that language. It runs to 1,465 characters and carries only what slips in conversation, because the formatting detail lives in the skill.
 - **A short reminder** of 329 characters goes out on every other turn, about a quarter of the full text.
 - **Housekeeping messages get nothing.** That covers a slash command, a file path, a bare URL, and short replies such as "yes" or "ok".
 
@@ -129,11 +133,14 @@ Environment variables change the behaviour:
 
 | Variable | What it does |
 |---|---|
+| `SIMPLE_LANGUAGE_LANG=en` | stop guessing and always send the English rulebook (or `ru` for Russian) |
 | `SIMPLE_LANGUAGE_FULL_EVERY=10` | bring repeats back: the full rulebook then goes out every tenth message |
 | `SIMPLE_LANGUAGE_MODE=full` | always send the full rulebook, as the first versions did |
 | `SIMPLE_LANGUAGE_MODE=off` | stay quiet and send nothing |
+| `SIMPLE_LANGUAGE_CHECK=off` | do not check documents after they are written |
+| `SIMPLE_LANGUAGE_CHECK=full` | report findings across the whole file, not only the lines you touched |
 
-The hook needs `python3` to count messages. Without it, it falls back to the old behaviour and sends the full text every time.
+The hook needs `python3` to detect the language and count messages. Without it, it sends the full text every time and takes the language from `SIMPLE_LANGUAGE_LANG`, defaulting to Russian.
 
 ### The checker reads your own writing too
 
@@ -164,7 +171,13 @@ The Russian set follows its own sources and does not mirror this one rule for ru
 
 ## How to remove it
 
-One command clears the skills, the hooks, and the settings entries:
+The plugin goes away with one command in a Claude session:
+
+```
+/plugin uninstall simple-language
+```
+
+A manual install is removed by the script. It clears the skills, the hooks, and the settings entries, including the hooks of earlier versions:
 
 ```bash
 cd simple-language && ./uninstall.sh
@@ -182,7 +195,7 @@ node tests/run.mjs
 
 The same check runs on push: `.github/workflows/prose.yml` runs the tests and checks the changed documents inside GitHub.
 
-The run covers more than the search patterns. It installs the set into a sandbox and removes it again, checks that other settings survive, and runs both hooks.
+The run covers more than the search patterns. It reads the plugin manifest. It installs the set into a sandbox and removes it again, checking that other settings survive. It also runs both hooks on Russian and English messages.
 
 Run it after any edit to the search patterns. Patterns break quietly: you fix one rule and a neighbouring one stops firing. When a finding changes on purpose, update `tests/expected.json`.
 

@@ -1,0 +1,28 @@
+{
+  "description": "Напоминание правил простого письма при каждом сообщении и проверка текста после записи документа. / Plain-writing reminder on every message and a prose check after a document is written.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/write-simply.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-prose-on-write.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

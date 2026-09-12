@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# Simple Language — удаление. Убирает скилы, хуки и записи в настройках.
-# Uninstaller. Removes the skills, the hooks, and the settings entries.
+# Simple Language — удаление ручной установки. Убирает скилы, хуки и записи в настройках.
+# Плагин удаляется иначе: /plugin uninstall simple-language
+# Uninstaller for the manual install. Removes the skills, the hooks, and the settings entries.
+# The plugin is removed with: /plugin uninstall simple-language
 set -euo pipefail
 
 SKILLS="$HOME/.claude/skills"
@@ -17,7 +19,7 @@ for s in pishi-prosto plain-english; do
   fi
 done
 
-for h in write-simply-reminder.sh write-simply-en.sh check-prose-on-write.sh; do
+for h in write-simply.sh write-simply-reminder.sh write-simply-en.sh check-prose-on-write.sh; do
   if [ -f "$HOOKS/$h" ]; then
     rm -f "$HOOKS/$h"
     echo "  убран хук / hook removed: $h"
@@ -39,7 +41,7 @@ except Exception:
     sys.exit(0)
 
 shutil.copy(settings, settings + ".bak")
-ours = ("write-simply-reminder.sh", "write-simply-en.sh", "check-prose-on-write.sh")
+ours = ("write-simply.sh", "write-simply-reminder.sh", "write-simply-en.sh", "check-prose-on-write.sh")
 hooks = data.get("hooks", {})
 removed = 0
 for event in ("UserPromptSubmit", "PostToolUse"):

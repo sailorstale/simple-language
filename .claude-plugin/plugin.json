@@ -1,0 +1,13 @@
+{
+  "name": "simple-language",
+  "version": "1.0.0",
+  "description": "Claude пишет просто: понятными словами, законченными предложениями, без канцелярита. Русский и английский, язык определяется сам. / Claude writes plainly: everyday words, full sentences, no jargon. Russian and English, the language is detected automatically.",
+  "author": {
+    "name": "sailorstale",
+    "url": "https://github.com/sailorstale"
+  },
+  "homepage": "https://github.com/sailorstale/simple-language",
+  "repository": "https://github.com/sailorstale/simple-language",
+  "license": "MIT",
+  "keywords": ["writing", "plain-language", "russian", "english", "prose", "style"]
+}

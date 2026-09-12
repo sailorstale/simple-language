@@ -1,0 +1,20 @@
+{
+  "name": "simple-language",
+  "owner": {
+    "name": "sailorstale",
+    "url": "https://github.com/sailorstale"
+  },
+  "metadata": {
+    "description": "Правила простого письма для Claude Code / Plain-language rules for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "simple-language",
+      "source": "./",
+      "description": "Claude пишет просто по-русски и по-английски, язык определяется сам. / Claude writes plainly in Russian and English, the language is detected automatically.",
+      "version": "1.0.0",
+      "category": "productivity",
+      "keywords": ["writing", "plain-language", "russian", "english"]
+    }
+  ]
+}

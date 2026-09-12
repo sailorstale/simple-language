@@ -12,14 +12,16 @@
 # берутся из git. Если файл не под git или ещё не отслеживается, показывается всё.
 #
 # Язык выбирается по самому тексту: больше кириллицы — русская проверка, иначе
-# английская. Если скила нет, node не установлен или находок нет, хук молчит.
+# английская. Проверщик берётся из плагина, из папки рядом с хуком или из
+# ~/.claude/skills. Если скила нет, node не установлен или находок нет, хук молчит.
 #
 # Настройки через переменные окружения:
 #   SIMPLE_LANGUAGE_CHECK=off   — не проверять ничего
 #   SIMPLE_LANGUAGE_CHECK=full  — показывать находки по всему файлу, а не только в правке
 
 SL_INPUT=$(cat)
-export SL_INPUT
+SL_HOOK_DIR="$(cd "$(dirname "$0")" && pwd)"
+export SL_INPUT SL_HOOK_DIR
 
 [ "${SIMPLE_LANGUAGE_CHECK:-}" = "off" ] && exit 0
 command -v python3 >/dev/null 2>&1 || exit 0
@@ -49,8 +51,19 @@ cyr = len(re.findall(r'[А-Яа-яёЁ]', text))
 lat = len(re.findall(r'[A-Za-z]', text))
 ru = cyr > lat
 skill = 'pishi-prosto' if ru else 'plain-english'
-script = os.path.expanduser(f'~/.claude/skills/{skill}/scripts/prose-check.mjs')
-if not os.path.isfile(script):
+
+# Проверщик лежит в скиле. Плагин держит скилы рядом с хуком, ручная установка
+# кладёт их в ~/.claude/skills, поэтому смотрим по очереди, где он есть.
+roots = [os.environ.get('CLAUDE_PLUGIN_ROOT') or '',
+         os.path.dirname(os.environ.get('SL_HOOK_DIR') or ''),
+         os.path.expanduser('~/.claude')]
+script = ''
+for root in roots:
+    candidate = os.path.join(root, 'skills', skill, 'scripts', 'prose-check.mjs')
+    if root and os.path.isfile(candidate):
+        script = candidate
+        break
+if not script:
     sys.exit(0)
 
 try:

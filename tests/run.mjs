@@ -45,8 +45,8 @@ function run(lang, file, flags = []) {
 
 // Хук читает отчёт проверки и пересобирает его для Claude. Формат отчёта и его
 // разбор живут в разных файлах, поэтому правка одного молча ломает другой.
-// Хук зовёт скил из ~/.claude, а не из репозитория. Если установленная копия
-// отстала, хук показывает не то, что показывает свежая проверка.
+// Ручная установка кладёт скил в ~/.claude, и хук может взять проверщик оттуда.
+// Если установленная копия отстала, хук показывает не то, что показывает свежая проверка.
 function checkInstalledCopy() {
   const home = process.env.HOME || ''
   const problems = []
@@ -72,7 +72,9 @@ function checkHook() {
   const input = JSON.stringify({ tool_name: 'Write', tool_input: { file_path: fixture } })
   let out
   try {
-    out = execFileSync('bash', [join(ROOT, 'hooks', 'check-prose-on-write.sh')], { input, encoding: 'utf8' })
+    out = execFileSync('bash', [join(ROOT, 'hooks', 'check-prose-on-write.sh')], {
+      input, encoding: 'utf8', env: { ...process.env, CLAUDE_PLUGIN_ROOT: ROOT, SIMPLE_LANGUAGE_CHECK: 'full' },
+    })
   } catch {
     console.log('✗ хук проверки — не запустился')
     return false
@@ -92,31 +94,80 @@ function checkHook() {
   return true
 }
 
-// Хук напоминания: первый ход даёт полный свод, дальше короткое напоминание,
-// а служебные сообщения не получают ничего.
+// Хук напоминания: первый ход на каждом языке даёт полный свод, дальше короткое
+// напоминание, служебные сообщения не получают ничего, а язык он угадывает сам,
+// не сбиваясь на путях к файлам.
 function checkReminder() {
-  const dir = join(ROOT, 'hooks', 'write-simply-reminder.sh')
+  const hook = join(ROOT, 'hooks', 'write-simply.sh')
   const session = `test-${process.pid}`
   const call = (prompt) => {
-    const out = execFileSync('bash', [dir], {
+    const out = execFileSync('bash', [hook], {
       input: JSON.stringify({ session_id: session, prompt }),
       encoding: 'utf8',
+      env: { ...process.env, SIMPLE_LANGUAGE_LANG: '', SIMPLE_LANGUAGE_MODE: '' },
     }).trim()
-    return out ? JSON.parse(out).hookSpecificOutput.additionalContext.length : 0
+    return out ? JSON.parse(out).hookSpecificOutput.additionalContext : ''
   }
-  const first = call('напиши документ')
-  const second = call('поправь второй раздел')
-  const service = call('да')
   const problems = []
-  if (first < 1000) problems.push(`первый ход дал ${first} знаков вместо полного свода`)
-  if (second < 200 || second > 600) problems.push(`второй ход дал ${second} знаков вместо короткого напоминания`)
-  if (service !== 0) problems.push(`служебное сообщение получило ${service} знаков вместо тишины`)
+  const ruFirst = call('напиши документ')
+  const ruSecond = call('поправь второй раздел')
+  const enFirst = call('write a document')
+  const enSecond = call('fix the second section')
+  const mixed = call('открой src/components/UserProfileSettings.tsx и поправь текст')
+  const service = call('да')
+  if (!ruFirst.startsWith('ПИШИ ПРОСТО —') || ruFirst.length < 1000)
+    problems.push(`первый русский ход дал ${ruFirst.length} знаков вместо полного свода`)
+  if (!ruSecond.startsWith('ПИШИ ПРОСТО (') || ruSecond.length < 200 || ruSecond.length > 600)
+    problems.push(`второй русский ход дал ${ruSecond.length} знаков вместо короткого напоминания`)
+  if (!enFirst.startsWith('WRITE SIMPLY —') || enFirst.length < 1000)
+    problems.push(`первый английский ход дал ${enFirst.length} знаков вместо полного свода`)
+  if (!enSecond.startsWith('WRITE SIMPLY (') || enSecond.length < 200 || enSecond.length > 600)
+    problems.push(`второй английский ход дал ${enSecond.length} знаков вместо короткого напоминания`)
+  if (!mixed.startsWith('ПИШИ ПРОСТО'))
+    problems.push('русское сообщение с путём к файлу принято за английское')
+  if (service) problems.push(`служебное сообщение получило ${service.length} знаков вместо тишины`)
   if (problems.length) {
     console.log('✗ хук напоминания')
     for (const p of problems) console.log(`    ${p}`)
     return false
   }
-  console.log(`✓ хук напоминания — полный свод ${first}, короткое ${second}, служебное молчит`)
+  console.log(`✓ хук напоминания — полный свод ru ${ruFirst.length} / en ${enFirst.length}, короткое ru ${ruSecond.length} / en ${enSecond.length}, служебное молчит`)
+  return true
+}
+
+// Плагин: манифест читается, хуки объявлены и указывают на существующие файлы,
+// а список в маркетплейсе называет тот же плагин и ту же версию.
+function checkPlugin() {
+  const problems = []
+  try {
+    const plugin = JSON.parse(readFileSync(join(ROOT, '.claude-plugin', 'plugin.json'), 'utf8'))
+    const market = JSON.parse(readFileSync(join(ROOT, '.claude-plugin', 'marketplace.json'), 'utf8'))
+    const hooks = JSON.parse(readFileSync(join(ROOT, 'hooks', 'hooks.json'), 'utf8'))
+    if (plugin.name !== 'simple-language') problems.push(`имя плагина ${plugin.name}`)
+    const listed = (market.plugins || []).find((p) => p.name === plugin.name)
+    if (!listed) problems.push('маркетплейс не называет плагин')
+    else if (listed.version !== plugin.version) problems.push(`версия в маркетплейсе ${listed.version}, в плагине ${plugin.version}`)
+    for (const event of ['UserPromptSubmit', 'PostToolUse']) {
+      const entries = hooks.hooks?.[event] || []
+      if (!entries.length) problems.push(`в hooks.json нет события ${event}`)
+      for (const e of entries) for (const h of e.hooks || []) {
+        if (!h.command.startsWith('${CLAUDE_PLUGIN_ROOT}/')) problems.push(`команда ${h.command} не идёт от корня плагина`)
+        const file = join(ROOT, h.command.replace('${CLAUDE_PLUGIN_ROOT}/', ''))
+        if (!existsSync(file)) problems.push(`hooks.json зовёт несуществующий файл ${h.command}`)
+      }
+    }
+    for (const skill of ['pishi-prosto', 'plain-english']) {
+      if (!existsSync(join(ROOT, 'skills', skill, 'SKILL.md'))) problems.push(`нет скила ${skill}`)
+    }
+  } catch (e) {
+    problems.push(`не прочитался: ${e.message.split('\n')[0]}`)
+  }
+  if (problems.length) {
+    console.log('✗ манифест плагина')
+    for (const p of problems) console.log(`    ${p}`)
+    return false
+  }
+  console.log('✓ манифест плагина — хуки и скилы на месте')
   return true
 }
 
@@ -134,16 +185,17 @@ function checkInstall() {
       hooks: { SessionStart: [{ hooks: [{ type: 'command', command: 'chuzhoy.sh' }] }] },
     }))
     execFileSync('bash', [join(ROOT, 'install.sh')], {
-      input: '3\n1\n1\n', encoding: 'utf8', env: { ...process.env, HOME: box },
+      encoding: 'utf8', env: { ...process.env, HOME: box },
     })
     for (const f of ['skills/pishi-prosto/SKILL.md', 'skills/plain-english/SKILL.md',
-                     'hooks/write-simply-reminder.sh', 'hooks/check-prose-on-write.sh']) {
+                     'hooks/write-simply.sh', 'hooks/check-prose-on-write.sh']) {
       if (!existsSync(join(box, '.claude', f))) problems.push(`после установки нет файла ${f}`)
     }
     const after = JSON.parse(readFileSync(settings, 'utf8'))
     if (after.model !== 'opus') problems.push('установка затёрла чужие настройки')
     if (!after.hooks?.SessionStart) problems.push('установка убрала чужой хук')
     if (!after.hooks?.UserPromptSubmit) problems.push('установка не подключила напоминание')
+    if (!after.hooks?.PostToolUse) problems.push('установка не подключила проверку после записи')
 
     execFileSync('bash', [join(ROOT, 'uninstall.sh')], {
       encoding: 'utf8', env: { ...process.env, HOME: box },
@@ -153,6 +205,7 @@ function checkInstall() {
     if (cleaned.model !== 'opus') problems.push('удаление затёрло чужие настройки')
     if (!cleaned.hooks?.SessionStart) problems.push('удаление убрало чужой хук')
     if (cleaned.hooks?.UserPromptSubmit) problems.push('удаление оставило наш хук в настройках')
+    if (cleaned.hooks?.PostToolUse) problems.push('удаление оставило хук проверки в настройках')
   } catch (e) {
     problems.push(`не отработало: ${e.message.split('\n')[0]}`)
   } finally {
@@ -168,6 +221,7 @@ function checkInstall() {
 }
 
 let failed = 0
+if (!checkPlugin()) failed++
 if (!checkInstall()) failed++
 if (!checkInstalledCopy()) failed++
 if (!checkHook()) failed++

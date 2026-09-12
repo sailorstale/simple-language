@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-# Simple Language — установщик. Спрашивает язык и ставит скил и хук.
-# Installer. Asks for a language, then installs the skill and the hook.
+# Simple Language — ручная установка без плагина. Ставит оба скила и оба хука.
+# Manual install without the plugin. Installs both skills and both hooks.
+#
+# Обычный путь — плагин: /plugin marketplace add sailorstale/simple-language
+# The usual path is the plugin; this script is for people who install by hand.
 set -euo pipefail
 
 REPO="$(cd "$(dirname "$0")" && pwd)"
@@ -10,137 +13,87 @@ SETTINGS="$HOME/.claude/settings.json"
 
 echo "Simple Language — установка / install"
 echo
-echo "Какой язык поставить? / Which language to install?"
-echo "  1) Русский — pishi-prosto"
-echo "  2) English — plain-english"
-echo "  3) Оба / Both"
-printf "Выбор / choice [1/2/3]: "
-read -r LANG
 
-install_skill() {
-  mkdir -p "$SKILLS"
-  if [ -d "$SKILLS/$1" ]; then
-    cp -R "$REPO/skills/$1" "$SKILLS/"
-    echo "  скил обновлён / skill updated: $1"
+mkdir -p "$SKILLS" "$HOOKS"
+for s in pishi-prosto plain-english; do
+  if [ -d "$SKILLS/$s" ]; then
+    cp -R "$REPO/skills/$s" "$SKILLS/"
+    echo "  скил обновлён / skill updated: $s"
   else
-    cp -R "$REPO/skills/$1" "$SKILLS/"
-    echo "  скил поставлен / skill installed: $1"
+    cp -R "$REPO/skills/$s" "$SKILLS/"
+    echo "  скил поставлен / skill installed: $s"
   fi
   # Finder сорит служебными файлами, и они не должны уезжать к человеку.
-  find "$SKILLS/$1" -name ".DS_Store" -delete 2>/dev/null || true
-}
+  find "$SKILLS/$s" -name ".DS_Store" -delete 2>/dev/null || true
+done
 
-HOOK=""
-case "$LANG" in
-  1) install_skill pishi-prosto;  HOOK="write-simply-reminder.sh" ;;
-  2) install_skill plain-english; HOOK="write-simply-en.sh" ;;
-  3)
-    install_skill pishi-prosto
-    install_skill plain-english
-    echo
-    echo "Какой хук включать каждый ход? / Which hook fires every turn?"
-    echo "  1) Русский  2) English  3) Никакой / none"
-    printf "[1/2/3]: "
-    read -r H
-    case "$H" in
-      1) HOOK="write-simply-reminder.sh" ;;
-      2) HOOK="write-simply-en.sh" ;;
-      *) HOOK="" ;;
-    esac
-    ;;
-  *) echo "Непонятный выбор. / Unknown choice."; exit 1 ;;
-esac
+for h in write-simply.sh check-prose-on-write.sh; do
+  cp "$REPO/hooks/$h" "$HOOKS/"
+  chmod +x "$HOOKS/$h"
+  echo "  хук / hook: $h -> $HOOKS/"
+done
 
-echo
-echo "Проверять текст сразу после записи документа? / Check prose right after a document is written?"
-echo "  1) Да / yes   2) Нет / no"
-printf "[1/2]: "
-read -r CHECK
-if [ "$CHECK" = "1" ]; then
-  mkdir -p "$HOOKS"
-  cp "$REPO/hooks/check-prose-on-write.sh" "$HOOKS/"
-  chmod +x "$HOOKS/check-prose-on-write.sh"
-  echo "  хук проверки / check hook: check-prose-on-write.sh -> $HOOKS/"
-  if command -v python3 >/dev/null 2>&1; then
-    python3 - "$SETTINGS" <<'PYCHECK'
-import json, os, sys
-settings = sys.argv[1]
-cmd = "$HOME/.claude/hooks/check-prose-on-write.sh"
-data = {}
-if os.path.exists(settings):
-    try:
-        with open(settings, encoding="utf-8") as f:
-            data = json.load(f)
-    except Exception:
-        print("  settings.json не читается как JSON — добавь запись из settings-snippet-check.json вручную")
-        print("  settings.json is not valid JSON — add the settings-snippet-check.json entry by hand")
-        sys.exit(0)
-post = data.setdefault("hooks", {}).setdefault("PostToolUse", [])
-wired = any(
-    any(h.get("command", "").endswith("/check-prose-on-write.sh") for h in e.get("hooks", []))
-    for e in post if isinstance(e, dict)
-)
-if wired:
-    print("  хук проверки уже подключён / check hook already wired")
-else:
-    post.append({"matcher": "Write|Edit|MultiEdit",
-                 "hooks": [{"type": "command", "command": cmd, "timeout": 30}]})
-    os.makedirs(os.path.dirname(settings), exist_ok=True)
-    with open(settings, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-    print("  хук проверки подключён в settings.json / check hook wired into settings.json")
-PYCHECK
-  else
-    echo "  python3 не найден — добавь запись из settings-snippet-check.json вручную"
-    echo "  python3 not found — add the entry from settings-snippet-check.json by hand"
+# Старые хуки из прежних версий: их заменил один write-simply.sh.
+for old in write-simply-reminder.sh write-simply-en.sh; do
+  if [ -f "$HOOKS/$old" ]; then
+    rm -f "$HOOKS/$old"
+    echo "  убран старый хук / old hook removed: $old"
   fi
-fi
+done
 
-if [ -n "$HOOK" ]; then
-  mkdir -p "$HOOKS"
-  cp "$REPO/hooks/$HOOK" "$HOOKS/"
-  chmod +x "$HOOKS/$HOOK"
-  echo "  хук / hook: $HOOK -> $HOOKS/"
-
-  if command -v python3 >/dev/null 2>&1; then
-    python3 - "$SETTINGS" "$HOOK" <<'PY'
-import json, os, sys, shutil
-settings, hook = sys.argv[1], sys.argv[2]
-cmd = "$HOME/.claude/hooks/" + hook
+if command -v python3 >/dev/null 2>&1; then
+  python3 - "$SETTINGS" <<'PY'
+import json, os, shutil, sys
+settings = sys.argv[1]
 data = {}
 if os.path.exists(settings):
     try:
         with open(settings, encoding="utf-8") as f:
             data = json.load(f)
     except Exception:
-        print("  settings.json не читается как JSON — добавь запись из settings-snippet вручную")
-        print("  settings.json is not valid JSON — add the settings-snippet entry by hand")
+        print("  settings.json не читается как JSON — добавь запись из settings-snippet.json вручную")
+        print("  settings.json is not valid JSON — add the settings-snippet.json entry by hand")
         sys.exit(0)
     shutil.copy(settings, settings + ".bak")
-ups = data.setdefault("hooks", {}).setdefault("UserPromptSubmit", [])
-def has(cmd_suffix):
-    return any(
-        any(h.get("command", "").endswith("/" + cmd_suffix) for h in e.get("hooks", []))
-        for e in ups if isinstance(e, dict)
+
+hooks = data.setdefault("hooks", {})
+old = ("/write-simply-reminder.sh", "/write-simply-en.sh")
+wanted = {
+    "UserPromptSubmit": (None, "$HOME/.claude/hooks/write-simply.sh", 5),
+    "PostToolUse": ("Write|Edit|MultiEdit", "$HOME/.claude/hooks/check-prose-on-write.sh", 30),
+}
+added = 0
+for event, (matcher, cmd, timeout) in wanted.items():
+    entries = hooks.setdefault(event, [])
+    # Записи прежних версий убираем, чтобы напоминание не приходило дважды.
+    for e in entries:
+        if isinstance(e, dict):
+            e["hooks"] = [h for h in e.get("hooks", []) if not h.get("command", "").endswith(old)]
+    entries[:] = [e for e in entries if not isinstance(e, dict) or e.get("hooks")]
+    wired = any(
+        any(h.get("command", "").endswith("/" + os.path.basename(cmd)) for h in e.get("hooks", []))
+        for e in entries if isinstance(e, dict)
     )
-other = "write-simply-en.sh" if hook == "write-simply-reminder.sh" else "write-simply-reminder.sh"
-if has(other):
-    print("  внимание: второй языковой хук уже подключён — два будут слать напоминание вдвоём")
-    print("  note: the other language hook is already wired — both will fire every turn")
-if has(hook):
-    print("  хук уже подключён в settings.json — не дублирую / already wired, skipping")
+    if wired:
+        continue
+    entry = {"hooks": [{"type": "command", "command": cmd, "timeout": timeout}]}
+    if matcher:
+        entry = {"matcher": matcher, **entry}
+    entries.append(entry)
+    added += 1
+
+os.makedirs(os.path.dirname(settings), exist_ok=True)
+with open(settings, "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+note = " (копия старого — settings.json.bak)" if os.path.exists(settings + ".bak") else ""
+if added:
+    print("  хуки подключены в settings.json%s / hooks wired into settings.json" % note)
 else:
-    ups.append({"hooks": [{"type": "command", "command": cmd, "timeout": 5}]})
-    os.makedirs(os.path.dirname(settings), exist_ok=True)
-    with open(settings, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-    note = " (копия старого — settings.json.bak)" if os.path.exists(settings + ".bak") else ""
-    print("  хук подключён в settings.json%s / hook wired into settings.json" % note)
+    print("  хуки уже подключены в settings.json — не дублирую / already wired, skipping")
 PY
-  else
-    echo "  python3 не найден — добавь запись из settings-snippet-*.json вручную"
-    echo "  python3 not found — add the entry from settings-snippet-*.json by hand"
-  fi
+else
+  echo "  python3 не найден — добавь запись из settings-snippet.json вручную"
+  echo "  python3 not found — add the entry from settings-snippet.json by hand"
 fi
 
 echo
@@ -163,8 +116,10 @@ fi
 
 echo
 if ! command -v python3 >/dev/null 2>&1; then
-  echo "python3 не найден. Хук будет слать полный свод каждый ход, без экономии."
-  echo "python3 not found. The hook will send the full rulebook every turn, with no saving."
+  echo "python3 не найден. Хук не сможет угадать язык и будет слать полный русский свод каждый ход."
+  echo "Задай язык переменной SIMPLE_LANGUAGE_LANG=ru или en."
+  echo "python3 not found. The hook cannot detect the language and will send the full Russian rulebook every turn."
+  echo "Set the language with SIMPLE_LANGUAGE_LANG=ru or en."
   echo
 fi
 

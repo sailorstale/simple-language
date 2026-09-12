@@ -205,6 +205,8 @@ The tests above check the checker and the hooks one by one. Plugin evals look at
 
 The suite has seven cases. Two ask about a technical term, in Russian and in English. Two hand Claude a percentage figure. Two ask for a document written through Write. The last one is a code request, where the plugin must stay out of the way.
 
+### How to run them
+
 Run from the repository root; you need Claude Code 2.1.269 or later:
 
 ```bash

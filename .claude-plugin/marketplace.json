@@ -12,9 +12,14 @@
       "name": "simple-language",
       "source": "./",
       "description": "Claude пишет просто по-русски и по-английски, язык определяется сам. / Claude writes plainly in Russian and English, the language is detected automatically.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "category": "productivity",
-      "keywords": ["writing", "plain-language", "russian", "english"]
+      "keywords": [
+        "writing",
+        "plain-language",
+        "russian",
+        "english"
+      ]
     }
   ]
 }

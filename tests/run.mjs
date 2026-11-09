@@ -151,13 +151,17 @@ function checkPlugin() {
       const entries = hooks.hooks?.[event] || []
       if (!entries.length) problems.push(`в hooks.json нет события ${event}`)
       for (const e of entries) for (const h of e.hooks || []) {
-        if (!h.command.startsWith('${CLAUDE_PLUGIN_ROOT}/')) problems.push(`команда ${h.command} не идёт от корня плагина`)
-        const file = join(ROOT, h.command.replace('${CLAUDE_PLUGIN_ROOT}/', ''))
+        if (!h.command.startsWith('"${CLAUDE_PLUGIN_ROOT}"/')) problems.push(`команда ${h.command} не идёт от корня плагина в кавычках`)
+        const file = join(ROOT, h.command.replace('"${CLAUDE_PLUGIN_ROOT}"/', ''))
         if (!existsSync(file)) problems.push(`hooks.json зовёт несуществующий файл ${h.command}`)
       }
     }
     for (const skill of ['pishi-prosto', 'plain-english']) {
       if (!existsSync(join(ROOT, 'skills', skill, 'SKILL.md'))) problems.push(`нет скила ${skill}`)
+    }
+    if (!plugin.icon || !existsSync(join(ROOT, plugin.icon))) problems.push('в plugin.json не указана иконка или файла нет')
+    for (const key of ['displayName', 'description', 'author', 'license', 'homepage']) {
+      if (!plugin[key]) problems.push(`в plugin.json нет поля ${key}`)
     }
   } catch (e) {
     problems.push(`не прочитался: ${e.message.split('\n')[0]}`)

@@ -78,6 +78,21 @@ cp hooks/write-simply.sh hooks/check-prose-on-write.sh ~/.claude/hooks/ && chmod
 
 Then restart your Claude session, so it picks up the new hooks and sees the skills.
 
+## Where it works
+
+The plugin installs from Claude Code and from the directory on claude.ai. What works depends on the place.
+
+- **Claude Code and Cowork** get everything: both skills, the reminder on every message, and the check after a document is written.
+- **Chat on claude.ai** gets the skills only. Hooks do not run there, so the reminder does not arrive on its own. The rules load when Claude takes on a long text or when you call the skill.
+
+## What the plugin does on your machine
+
+The plugin runs only on your computer and sends nothing anywhere. There is no network use and no usage tracking. This is everything it runs.
+
+- **The reminder hook** reads the text of your message to guess the language and to tell a housekeeping message from a real one. To count turns it writes a small file in `~/.claude/.simple-language/`, one per session, and deletes files older than a week on its own. Inside, the hook runs `python3`.
+- **The check hook** fires when Claude writes a `.md` file. It reads that file and runs the checker on `node` from the plugin folder. It also asks `git` in the file's folder which lines changed, so it reports findings on those lines only. The result goes back to Claude's context and nowhere else.
+- **The checker** reads the file it is given and prints a report. It changes no files.
+
 ## Check that it worked
 
 Three ways, from the quickest to the clearest.

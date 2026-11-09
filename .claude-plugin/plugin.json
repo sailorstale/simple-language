@@ -1,13 +1,26 @@
 {
   "name": "simple-language",
-  "version": "1.0.0",
-  "description": "Claude пишет просто: понятными словами, законченными предложениями, без канцелярита. Русский и английский, язык определяется сам. / Claude writes plainly: everyday words, full sentences, no jargon. Russian and English, the language is detected automatically.",
+  "displayName": "Simple Language",
+  "version": "1.1.0",
+  "description": "Claude writes plainly in Russian and English: everyday words, full sentences, no jargon; the language is detected from your message. / Claude пишет просто по-русски и по-английски: понятными словами, законченными предложениями, без канцелярита; язык определяется по твоему сообщению.",
   "author": {
     "name": "sailorstale",
     "url": "https://github.com/sailorstale"
   },
   "homepage": "https://github.com/sailorstale/simple-language",
   "repository": "https://github.com/sailorstale/simple-language",
+  "documentationUrl": "https://github.com/sailorstale/simple-language#readme",
+  "supportUrl": "https://github.com/sailorstale/simple-language/issues",
   "license": "MIT",
-  "keywords": ["writing", "plain-language", "russian", "english", "prose", "style"]
+  "icon": "./assets/icon.png",
+  "keywords": [
+    "writing",
+    "plain-language",
+    "russian",
+    "english",
+    "prose",
+    "style",
+    "writing-style",
+    "clarity"
+  ]
 }
